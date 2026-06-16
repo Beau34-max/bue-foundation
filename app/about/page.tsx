@@ -96,13 +96,13 @@ export default function AboutPage() {
               </h2>
               <p className="text-mid leading-relaxed mb-4">
                 <strong className="text-dark">Beatrice Uchenna Egwu</strong> — lovingly called{" "}
-                <em>Mama Beatrice</em> by those she serves — founded this organisation out of a
+                <em>Aunty Chy</em> by those she serves — founded this organisation out of a
                 deeply personal conviction: that no one should suffer alone when a community can
                 stand together.
               </p>
               <p className="text-mid leading-relaxed mb-4">
                 Having witnessed first-hand the devastating effects of poverty, educational
-                exclusion, and homelessness in her community, Mama Beatrice resolved to be the
+                exclusion, and homelessness in her community, Aunty Chy resolved to be the
                 change. She channelled her passion, resources, and network into creating an
                 organisation that would bring real, lasting change to the most marginalised.
               </p>
@@ -122,7 +122,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="text-xl font-bold text-dark">Beatrice Uchenna Egwu</h3>
                 <p className="text-primary font-medium">Founder &amp; Chief Executive Officer</p>
-                <p className="text-mid text-sm mt-1">Mama Beatrice</p>
+                <p className="text-mid text-sm mt-1">Aunty Chy</p>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">

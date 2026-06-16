@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useRef } from "react";
+import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp, Upload, FileText } from "lucide-react";
 
 const jobs = [
   {
@@ -74,15 +74,19 @@ const jobs = [
   },
 ];
 
-function JobCard({ job }: { job: typeof jobs[0] }) {
+function JobCard({ job }: { job: (typeof jobs)[0] }) {
   const [expanded, setExpanded] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    position: job.title,
     experience: "",
     linkedin: "",
     coverLetter: "",
@@ -95,9 +99,40 @@ function JobCard({ job }: { job: typeof jobs[0] }) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] || null;
+    if (file && file.size > 5 * 1024 * 1024) {
+      setError("CV file must be under 5 MB.");
+      setCvFile(null);
+      return;
+    }
+    setError("");
+    setCvFile(file);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+
+    const data = new FormData();
+    data.append("position", job.title);
+    Object.entries(form).forEach(([k, v]) => data.append(k, v));
+    if (cvFile) data.append("cv", cvFile);
+
+    try {
+      const res = await fetch("/api/apply", { method: "POST", body: data });
+      const json = await res.json();
+      if (json.success) {
+        setSubmitted(true);
+      } else {
+        setError(json.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -131,13 +166,9 @@ function JobCard({ job }: { job: typeof jobs[0] }) {
             className="flex items-center gap-1.5 text-primary text-sm font-semibold hover:underline"
           >
             {expanded ? (
-              <>
-                Less details <ChevronUp size={16} />
-              </>
+              <>Less details <ChevronUp size={16} /></>
             ) : (
-              <>
-                View full job description <ChevronDown size={16} />
-              </>
+              <>View full job description <ChevronDown size={16} /></>
             )}
           </button>
           <button
@@ -200,17 +231,16 @@ function JobCard({ job }: { job: typeof jobs[0] }) {
       {/* Application Form */}
       {showForm && (
         <div id={`form-${job.id}`} className="border-t border-light px-6 sm:px-8 py-8 bg-page">
-          <h3 className="text-xl font-bold text-dark mb-6">
-            Apply for: {job.title}
-          </h3>
+          <h3 className="text-xl font-bold text-dark mb-6">Apply for: {job.title}</h3>
 
           {submitted ? (
             <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center">
               <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
               <h4 className="text-xl font-bold text-dark mb-2">Application Submitted!</h4>
               <p className="text-mid">
-                Thank you for applying to the <strong>{job.title}</strong> role at BUE
-                Foundation. We will review your application and reach out within 10 business days.
+                Thank you for applying to the <strong>{job.title}</strong> role at BUE Foundation.
+                We have received your application{cvFile ? " and CV" : ""} and will be in touch
+                within 10 business days.
               </p>
             </div>
           ) : (
@@ -293,6 +323,54 @@ function JobCard({ job }: { job: typeof jobs[0] }) {
                   placeholder="https://linkedin.com/in/yourname"
                 />
               </div>
+
+              {/* CV Upload */}
+              <div>
+                <label className="block text-sm font-semibold text-dark mb-1.5">
+                  Upload Your CV / Resume *
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`w-full border-2 border-dashed rounded-lg p-5 text-center cursor-pointer transition-all ${
+                    cvFile
+                      ? "border-primary bg-primary/5"
+                      : "border-light hover:border-primary/50 hover:bg-primary/5"
+                  }`}
+                >
+                  {cvFile ? (
+                    <div className="flex items-center justify-center gap-2 text-primary">
+                      <FileText size={20} />
+                      <span className="text-sm font-medium">{cvFile.name}</span>
+                      <span className="text-xs text-mid">
+                        ({(cvFile.size / 1024).toFixed(0)} KB)
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="text-mid">
+                      <Upload size={24} className="mx-auto mb-2 text-mid" />
+                      <p className="text-sm font-medium">Click to upload your CV</p>
+                      <p className="text-xs mt-1">PDF, DOC, or DOCX · Max 5 MB</p>
+                    </div>
+                  )}
+                </div>
+                {cvFile && (
+                  <button
+                    type="button"
+                    onClick={() => { setCvFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+                    className="mt-1.5 text-xs text-mid hover:text-dark underline"
+                  >
+                    Remove file
+                  </button>
+                )}
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-dark mb-1.5">
                   Cover Letter / Motivation Statement *
@@ -325,23 +403,20 @@ function JobCard({ job }: { job: typeof jobs[0] }) {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-700">
-                <strong>CV / Resume:</strong> Please email your CV to{" "}
-                <a
-                  href="mailto:info@buef.onmicrosoft.com"
-                  className="font-semibold underline hover:no-underline"
-                >
-                  info@buef.onmicrosoft.com
-                </a>{" "}
-                with subject line:{" "}
-                <em>&ldquo;Application – {job.title}&rdquo;</em>, alongside submission of this form.
-              </div>
+
+              {error && (
+                <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                  {error}
+                </div>
+              )}
+
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 py-3.5 bg-primary text-white font-bold rounded-md hover:bg-primary-dark transition-colors text-base"
+                  disabled={loading || !cvFile}
+                  className="flex-1 py-3.5 bg-primary text-white font-bold rounded-md hover:bg-primary-dark transition-colors text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Submit Application
+                  {loading ? "Submitting…" : "Submit Application"}
                 </button>
                 <button
                   type="button"
@@ -351,6 +426,10 @@ function JobCard({ job }: { job: typeof jobs[0] }) {
                   Cancel
                 </button>
               </div>
+              <p className="text-xs text-mid text-center">
+                Your CV will be sent directly to{" "}
+                <strong>info@buef.onmicrosoft.com</strong>
+              </p>
             </form>
           )}
         </div>
@@ -408,8 +487,8 @@ export default function CareersPage() {
               Current Vacancies
             </h2>
             <p className="text-mid mt-5 max-w-xl mx-auto">
-              We currently have <strong>2 open positions</strong>. Click on a role to view the full
-              job description and apply.
+              We currently have <strong>2 open positions</strong>. Click a role to view the full
+              description and apply — upload your CV directly from the form.
             </p>
           </div>
           <div className="space-y-6">

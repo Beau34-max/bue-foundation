@@ -11,8 +11,8 @@ const team = [
   {
     name: "Beatrice Uchenna Egwu",
     role: "Founder & Chief Executive Officer",
-    nickname: "Mama Beatrice",
-    bio: "The visionary behind the BUE Foundation, Mama Beatrice founded the organisation out of a deep calling to serve the vulnerable. Her compassion and leadership continue to inspire everything we do.",
+    nickname: "Aunty Chy",
+    bio: "The visionary behind the BUE Foundation, Aunty Chy founded the organisation out of a deep calling to serve the vulnerable. Her compassion and leadership continue to inspire everything we do.",
     initial: "B",
   },
   {

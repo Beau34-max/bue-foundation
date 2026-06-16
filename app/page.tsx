@@ -42,7 +42,7 @@ const testimonials = [
   },
   {
     quote:
-      "Through the scholarship programme, my daughter is now in university. I could never have afforded it without BUE Foundation's support. God bless Mama Beatrice.",
+      "Through the scholarship programme, my daughter is now in university. I could never have afforded it without BUE Foundation's support. God bless Aunty Chy.",
     name: "Mama Ifeanyi",
     title: "Beneficiary, Afikpo-North",
   },
@@ -76,7 +76,7 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section
-        className="relative min-h-[90vh] flex items-center justify-center text-white"
+        className="relative min-h-[70vh] flex items-center justify-center text-white"
         style={{ background: "linear-gradient(135deg, #4B1F6F 0%, #212121 100%)" }}
       >
         <div
@@ -163,7 +163,7 @@ export default function HomePage() {
                 the belief that every human life has inherent worth and dignity.
               </p>
               <p className="text-mid leading-relaxed mb-4">
-                Led by <strong className="text-dark">Mama Beatrice</strong>, our team works
+                Led by <strong className="text-dark">Aunty Chy</strong>, our team works
                 tirelessly to reach marginalised individuals and families — providing the support
                 they need to rebuild their lives and discover their God-given potential.
               </p>
