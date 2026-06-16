@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4B1F6F;
+  --color-primary-dark: #3a1757;
+  --color-primary-light: #6b3a8f;
+  --color-page: #F7F7F7;
+  --color-dark: #212121;
+  --color-accent: #FFFF00;
+  --color-mid: #888888;
+  --color-light: #e8e8e8;
+  --color-white: #FFFFFF;
+}
+
+body {
+  background-color: #F7F7F7;
+  color: #212121;
+  font-family: var(--font-bitter), Georgia, "Times New Roman", serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-bitter), Georgia, "Times New Roman", serif;
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(75,31,111,0.93) 0%, rgba(33,33,33,0.85) 100%);
+}
+
+.section-heading::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background-color: #4B1F6F;
+  margin-top: 12px;
+}
+
+.section-heading-center::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background-color: #4B1F6F;
+  margin: 12px auto 0;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(75, 31, 111, 0.15);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #4B1F6F;
+  box-shadow: 0 0 0 3px rgba(75, 31, 111, 0.15);
+}
