@@ -135,9 +135,15 @@ export default function Footer() {
               </a>
             </div>
             <div>
-              <span className="text-white/90 font-medium">Phone: </span>
+              <span className="text-white/90 font-medium">Phone (UK): </span>
               <a href="tel:+447780105816" className="hover:text-white transition-colors">
                 +44 7780 105816
+              </a>
+            </div>
+            <div>
+              <span className="text-white/90 font-medium">Phone (Nigeria): </span>
+              <a href="tel:+2349031679658" className="hover:text-white transition-colors">
+                +234 903 167 9658
               </a>
             </div>
           </div>

@@ -78,9 +78,14 @@ export default function ContactPage() {
                   icon: Phone,
                   label: "Phone",
                   content: (
-                    <a href="tel:+447780105816" className="text-primary hover:underline">
-                      +44 7780 105816
-                    </a>
+                    <div className="flex flex-col gap-1">
+                      <a href="tel:+447780105816" className="text-primary hover:underline">
+                        +44 7780 105816 <span className="text-mid text-xs">(UK)</span>
+                      </a>
+                      <a href="tel:+2349031679658" className="text-primary hover:underline">
+                        +234 903 167 9658 <span className="text-mid text-xs">(Nigeria)</span>
+                      </a>
+                    </div>
                   ),
                 },
               ].map(({ icon: Icon, label, content }) => (

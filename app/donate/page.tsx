@@ -305,11 +305,25 @@ export default function DonatePage() {
               </div>
 
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-light">
-                <h3 className="font-bold text-dark mb-3">Other Ways to Give</h3>
+                <h3 className="font-bold text-dark mb-4">Bank Transfer (Nigeria)</h3>
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-4">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-mid">Bank</span>
+                      <span className="font-bold text-dark">Kuda Business</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-mid">Account Name</span>
+                      <span className="font-bold text-dark text-right text-xs leading-tight max-w-[160px]">Beatrice Uchenna Egwu Foundation</span>
+                    </div>
+                    <div className="flex justify-between items-center border-t border-primary/20 pt-2 mt-2">
+                      <span className="text-mid">Account Number</span>
+                      <span className="font-extrabold text-primary text-lg tracking-wider">3003833268</span>
+                    </div>
+                  </div>
+                </div>
+                <h3 className="font-bold text-dark mb-3 mt-4">Other Ways to Give</h3>
                 <div className="space-y-2 text-sm text-mid">
-                  <p>
-                    <strong className="text-dark">Bank Transfer:</strong> Contact us for bank details
-                  </p>
                   <p>
                     <strong className="text-dark">In Kind:</strong> Donate goods, equipment, or
                     professional services
