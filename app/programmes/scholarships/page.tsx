@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, GraduationCap } from "lucide-react";
+import { CheckCircle, GraduationCap, AlertCircle } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const scholarships = [
   {
@@ -29,7 +30,7 @@ const scholarships = [
     amount: "Up to ₦150,000 / session",
     deadline: "Quarterly — check form",
     description: "Supports undergraduate and HND students with tuition fees, accommodation, and essential academic materials.",
-    criteria: ["Enrolled in an accredited Nigerian university or polytechnic", "Minimum 2.5 GPA (Second Class Lower / Merit)", "Financial need demonstrated", "Community service or volunteer experience preferred"],
+    criteria: ["Enrolled in an accredited Nigerian university or polytechnic", "Minimum 3.5 GPA (Second Class Upper / Distinction)", "Financial need demonstrated", "Community service or volunteer experience preferred"],
   },
   {
     id: "vocational",
@@ -50,10 +51,18 @@ export default function ScholarshipsPage() {
     name: "", email: "", phone: "", guardianName: "", guardianPhone: "",
     scholarshipType: "", schoolName: "", yearLevel: "", studentAge: "",
     familyIncome: "", financialNeed: "", academicHistory: "",
+    address: "", state: "", lga: "",
   });
 
+  const availableLgas = form.state ? (NIGERIA_STATES_LGAS[form.state] || []) : [];
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForm((prev) => ({ ...prev, state: value, lga: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -128,6 +137,17 @@ export default function ScholarshipsPage() {
               <h2 className="text-3xl font-bold text-dark mb-3">Apply for a Scholarship</h2>
               <p className="text-mid">Complete the form below. We will review and contact you within 3 weeks.</p>
             </div>
+
+            {/* Exam/interview notice */}
+            <div className="flex items-start gap-3 bg-amber-50 border border-amber-300 rounded-xl p-4 mb-8">
+              <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-amber-800 text-sm leading-relaxed">
+                <strong>Please Note:</strong> Successful applicants may be invited to attend the{" "}
+                <strong>BUEF Scholarship Examination and/or Interview</strong> as part of the
+                selection process. Shortlisted candidates will be contacted with further details.
+              </p>
+            </div>
+
             {submitted ? (
               <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center">
                 <CheckCircle size={56} className="text-green-500 mx-auto mb-4" />
@@ -167,6 +187,37 @@ export default function ScholarshipsPage() {
                     <label className="block text-sm font-semibold text-dark mb-1.5">Phone Number *</label>
                     <input type="tel" name="phone" value={form.phone} onChange={handleChange} required
                       className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm transition-all" placeholder="+234 ..." />
+                  </div>
+                </div>
+
+                {/* Address section */}
+                <div>
+                  <label className="block text-sm font-semibold text-dark mb-1.5">Home Address *</label>
+                  <input type="text" name="address" value={form.address} onChange={handleChange} required
+                    className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm transition-all"
+                    placeholder="House number, street name, area" />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-dark mb-1.5">State *</label>
+                    <select name="state" value={form.state} onChange={handleChange} required
+                      className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all">
+                      <option value="">Select state</option>
+                      {NIGERIA_STATES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-dark mb-1.5">Local Government Area (LGA) *</label>
+                    <select name="lga" value={form.lga} onChange={handleChange} required
+                      disabled={!form.state}
+                      className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                      <option value="">{form.state ? "Select LGA" : "Select state first"}</option>
+                      {availableLgas.map((lga) => (
+                        <option key={lga} value={lga}>{lga}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -219,6 +270,9 @@ export default function ScholarshipsPage() {
                   className="w-full py-3.5 bg-primary text-white font-bold rounded-md hover:bg-primary-dark transition-colors text-base disabled:opacity-50">
                   {loading ? "Submitting…" : "Submit Scholarship Application"}
                 </button>
+                <p className="text-xs text-mid text-center">
+                  Shortlisted applicants may be invited to the BUEF Scholarship Exam / Interview.
+                </p>
               </form>
             )}
           </div>

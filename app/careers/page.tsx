@@ -8,8 +8,8 @@ const jobs = [
     id: "admin-manager",
     title: "Administrative Manager",
     type: "Full-time",
-    location: "Afikpo-North, Ebonyi State (On-site)",
-    salary: "Competitive — commensurate with experience",
+    location: "Remote / Hybrid",
+    salary: "₦30,000 per month",
     department: "Operations",
     summary:
       "We are seeking a highly organised and proactive Administrative Manager to oversee the day-to-day operations of the BUE Foundation. This is a pivotal role that ensures our programmes run smoothly and our team has the support they need to serve communities effectively.",
@@ -42,8 +42,8 @@ const jobs = [
     id: "fundraiser",
     title: "Fundraising Manager",
     type: "Full-time",
-    location: "Afikpo-North / Remote (Hybrid)",
-    salary: "Competitive + performance incentives",
+    location: "Remote / Hybrid",
+    salary: "₦50,000 per month",
     department: "Fundraising & Development",
     summary:
       "The BUE Foundation is looking for a passionate and strategic Fundraising Manager to lead our income generation and donor engagement efforts. You will develop and implement fundraising campaigns, build lasting relationships with donors, and help ensure the sustainability of our programmes.",
