@@ -62,6 +62,8 @@ const opportunities = [
 
 export default function VolunteerPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [form, setForm] = useState({
     name: "",
@@ -84,9 +86,27 @@ export default function VolunteerPage() {
     document.getElementById("volunteer-form")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/volunteer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSubmitted(true);
+      } else {
+        setError(json.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -284,11 +304,17 @@ export default function VolunteerPage() {
                     placeholder="Tell us a little about yourself and your motivation to volunteer..."
                   />
                 </div>
+                {error && (
+                  <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                    {error}
+                  </div>
+                )}
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-primary text-white font-bold rounded-md hover:bg-primary-dark transition-colors text-base"
+                  disabled={loading}
+                  className="w-full py-3.5 bg-primary text-white font-bold rounded-md hover:bg-primary-dark transition-colors text-base disabled:opacity-50"
                 >
-                  Submit Application
+                  {loading ? "Submitting…" : "Submit Application"}
                 </button>
               </form>
             )}

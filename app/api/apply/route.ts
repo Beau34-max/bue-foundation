@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +15,22 @@ export async function POST(request: NextRequest) {
     const coverLetter = formData.get("coverLetter") as string;
     const heardAbout = formData.get("heardAbout") as string;
     const cvFile = formData.get("cv") as File | null;
+
+    // Save to Supabase (CV file goes to email; we store the filename)
+    await supabase.from("submissions").insert({
+      type: "career_application",
+      name,
+      email,
+      phone,
+      data: {
+        position,
+        experience,
+        linkedin: linkedin || null,
+        cover_letter: coverLetter,
+        heard_about: heardAbout || null,
+        cv_filename: cvFile && cvFile.size > 0 ? cvFile.name : null,
+      },
+    });
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.office365.com",
