@@ -4,19 +4,30 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Meet Our Team", href: "/team" },
-  { label: "Partnership", href: "/partnership" },
+  {
+    label: "Programmes",
+    href: "/programmes",
+    children: [
+      { label: "Scholarships", href: "/programmes/scholarships" },
+      { label: "Enterprise Fund", href: "/programmes/enterprise-fund" },
+      { label: "Events", href: "/programmes/events" },
+      { label: "Training", href: "/programmes/training" },
+    ],
+  },
   { label: "Volunteer", href: "/volunteer" },
+  { label: "Partnership", href: "/partnership" },
   { label: "Careers", href: "/careers" },
 ];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
   const isActive = (href: string) =>
@@ -52,19 +63,45 @@ export default function Navbar() {
 
             {/* Desktop Nav */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isActive(link.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-dark hover:text-primary hover:bg-primary/5"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) =>
+                link.children ? (
+                  <div key={link.href} className="relative group">
+                    <button
+                      className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        isActive(link.href)
+                          ? "text-primary bg-primary/10"
+                          : "text-dark hover:text-primary hover:bg-primary/5"
+                      }`}
+                    >
+                      {link.label}
+                      <ChevronDown size={13} />
+                    </button>
+                    <div className="absolute top-full left-0 mt-1 w-52 bg-white shadow-lg rounded-xl py-1.5 border border-light opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+                      {link.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="block px-4 py-2.5 text-sm text-dark hover:bg-primary/5 hover:text-primary"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      isActive(link.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-dark hover:text-primary hover:bg-primary/5"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
               <Link
                 href="/donate"
                 className="ml-2 px-4 py-2 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary-dark transition-colors"
@@ -88,20 +125,55 @@ export default function Navbar() {
         {mobileOpen && (
           <div className="lg:hidden bg-white border-t border-light px-4 py-3">
             <nav className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    isActive(link.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-dark hover:text-primary hover:bg-primary/5"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) =>
+                link.children ? (
+                  <div key={link.href}>
+                    <button
+                      onClick={() =>
+                        setOpenDropdown(openDropdown === link.href ? null : link.href)
+                      }
+                      className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
+                        isActive(link.href) ? "text-primary bg-primary/10" : "text-dark"
+                      }`}
+                    >
+                      {link.label}
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform ${
+                          openDropdown === link.href ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === link.href && (
+                      <div className="ml-4 mt-1 flex flex-col gap-1">
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={() => setMobileOpen(false)}
+                            className="px-3 py-2 text-sm text-mid hover:text-primary hover:bg-primary/5 rounded-md"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`px-3 py-2 text-sm font-medium rounded-md ${
+                      isActive(link.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-dark hover:text-primary hover:bg-primary/5"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
               <Link
                 href="/donate"
                 onClick={() => setMobileOpen(false)}
