@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calendar, MapPin, Clock, CheckCircle } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const events = [
   {
@@ -61,14 +62,19 @@ const events = [
 export default function EventsPage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
-  const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; dietary: string }>>({});
+  const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; address: string; state: string; lga: string; dietary: string }>>({});
 
   function getForm(id: string) {
-    return forms[id] || { name: "", email: "", phone: "", dietary: "" };
+    return forms[id] || { name: "", email: "", phone: "", address: "", state: "", lga: "", dietary: "" };
   }
 
-  function handleChange(id: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForms((prev) => ({ ...prev, [id]: { ...getForm(id), [e.target.name]: e.target.value } }));
+  function handleChange(id: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForms((prev) => ({ ...prev, [id]: { ...getForm(id), state: value, lga: "" } }));
+    } else {
+      setForms((prev) => ({ ...prev, [id]: { ...getForm(id), [name]: value } }));
+    }
   }
 
   async function handleRegister(e: React.FormEvent, event: (typeof events)[0]) {
@@ -80,6 +86,9 @@ export default function EventsPage() {
     data.append("name", f.name);
     data.append("email", f.email);
     data.append("phone", f.phone);
+    data.append("address", f.address);
+    data.append("state", f.state);
+    data.append("lga", f.lga);
     data.append("event", event.title);
     data.append("eventDate", event.date);
     data.append("dietaryRequirements", f.dietary);
@@ -165,6 +174,33 @@ export default function EventsPage() {
                           <input type="tel" name="phone" value={getForm(event.id).phone}
                             onChange={(e) => handleChange(event.id, e)} required
                             className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all bg-white" placeholder="+234 ..." />
+                        </div>
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-xs font-semibold text-dark mb-1">Home Address</label>
+                        <input type="text" name="address" value={getForm(event.id).address}
+                          onChange={(e) => handleChange(event.id, e)}
+                          className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all bg-white" placeholder="House number, street name, area" />
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-dark mb-1">State</label>
+                          <select name="state" value={getForm(event.id).state}
+                            onChange={(e) => handleChange(event.id, e)}
+                            className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all bg-white">
+                            <option value="">Select state</option>
+                            {NIGERIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-dark mb-1">LGA</label>
+                          <select name="lga" value={getForm(event.id).lga}
+                            onChange={(e) => handleChange(event.id, e)}
+                            disabled={!getForm(event.id).state}
+                            className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all bg-white disabled:opacity-50 disabled:cursor-not-allowed">
+                            <option value="">{getForm(event.id).state ? "Select LGA" : "Select state first"}</option>
+                            {(NIGERIA_STATES_LGAS[getForm(event.id).state] || []).map((lga) => <option key={lga} value={lga}>{lga}</option>)}
+                          </select>
                         </div>
                       </div>
                       <button type="submit" disabled={loadingId === event.id}

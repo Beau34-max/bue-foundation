@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Clock, MapPin, CheckCircle } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const opportunities = [
   {
@@ -69,15 +70,25 @@ export default function VolunteerPage() {
     name: "",
     email: "",
     phone: "",
+    address: "",
+    state: "",
+    lga: "",
     role: "",
     availability: "",
     message: "",
   });
 
+  const availableLgas = NIGERIA_STATES_LGAS[form.state] || [];
+
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForm((prev) => ({ ...prev, state: value, lga: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
   function handleApply(role: string) {
@@ -257,6 +268,34 @@ export default function VolunteerPage() {
                       placeholder="+234 ..."
                     />
                   </div>
+                  <div className="sm:col-span-1" />
+                </div>
+                <div className="mb-5">
+                  <label className="block text-sm font-semibold text-dark mb-1.5">Home Address</label>
+                  <input type="text" name="address" value={form.address} onChange={handleChange}
+                    className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm transition-all"
+                    placeholder="House number, street name, area" />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-5 mb-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-dark mb-1.5">State</label>
+                    <select name="state" value={form.state} onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all">
+                      <option value="">Select state</option>
+                      {NIGERIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-dark mb-1.5">LGA</label>
+                    <select name="lga" value={form.lga} onChange={handleChange}
+                      disabled={!form.state}
+                      className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                      <option value="">{form.state ? "Select LGA" : "Select state first"}</option>
+                      {availableLgas.map((lga) => <option key={lga} value={lga}>{lga}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-5 mb-5">
                   <div>
                     <label className="block text-sm font-semibold text-dark mb-1.5">
                       Volunteering Role *

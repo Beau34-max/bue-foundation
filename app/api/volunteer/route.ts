@@ -8,7 +8,7 @@ const SMTP_FROM = process.env.SMTP_USER || "info@buef.onmicrosoft.com";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, role, availability, message } = body;
+    const { name, email, phone, address, state, lga, role, availability, message } = body;
 
     // Save to Supabase — non-fatal
     try {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
           name,
           email,
           phone: phone || null,
-          data: { role, availability: availability || null, message: message || null },
+          data: { address: address || null, state: state || null, lga: lga || null, role, availability: availability || null, message: message || null },
         });
       }
     } catch (dbErr) {
@@ -49,6 +49,8 @@ export async function POST(request: NextRequest) {
               <tr><td style="padding:8px 0;font-weight:bold;width:140px;color:#4B1F6F;">Name:</td><td>${name}</td></tr>
               <tr><td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Email:</td><td><a href="mailto:${email}">${email}</a></td></tr>
               <tr><td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Phone:</td><td>${phone || "Not provided"}</td></tr>
+              ${address ? `<tr><td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Address:</td><td>${address}</td></tr>` : ""}
+              ${state ? `<tr><td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">State/LGA:</td><td>${state}${lga ? ` – ${lga}` : ""}</td></tr>` : ""}
               <tr><td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Role:</td><td>${role}</td></tr>
               <tr><td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Availability:</td><td>${availability || "Not specified"}</td></tr>
             </table>

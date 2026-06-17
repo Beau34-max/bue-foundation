@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle, Lightbulb, TrendingUp, RefreshCw, ShieldCheck, ArrowRight } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const steps = [
   { step: "01", title: "Apply Online", desc: "Submit your business idea, funding request, and personal details through our application form below." },
@@ -41,14 +42,21 @@ export default function EnterpriseFundPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    name: "", email: "", phone: "", location: "",
+    name: "", email: "", phone: "", address: "", state: "", lga: "",
     businessName: "", businessSector: "", businessStage: "",
     fundingAmount: "", businessDescription: "", revenueModel: "",
     profitEstimate: "", whyBUE: "",
   });
 
+  const availableLgas = NIGERIA_STATES_LGAS[form.state] || [];
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForm((prev) => ({ ...prev, state: value, lga: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -190,17 +198,40 @@ export default function EnterpriseFundPage() {
               <h3 className="font-bold text-dark text-base border-b border-light pb-3">Personal Details</h3>
               <div className="grid sm:grid-cols-2 gap-5">
                 {[
-                  { name: "name", label: "Full Name", placeholder: "Your full name", type: "text", required: true },
-                  { name: "email", label: "Email Address", placeholder: "your@email.com", type: "email", required: true },
-                  { name: "phone", label: "Phone Number", placeholder: "+234 ...", type: "tel", required: true },
-                  { name: "location", label: "State / LGA", placeholder: "e.g. Afikpo-North, Ebonyi State", type: "text", required: true },
+                  { name: "name", label: "Full Name", placeholder: "Your full name", type: "text" },
+                  { name: "email", label: "Email Address", placeholder: "your@email.com", type: "email" },
+                  { name: "phone", label: "Phone Number", placeholder: "+234 ...", type: "tel" },
                 ].map((f) => (
                   <div key={f.name}>
-                    <label className="block text-sm font-semibold text-dark mb-1.5">{f.label}{f.required ? " *" : ""}</label>
-                    <input type={f.type} name={f.name} value={(form as Record<string,string>)[f.name]} onChange={handleChange} required={f.required}
+                    <label className="block text-sm font-semibold text-dark mb-1.5">{f.label} *</label>
+                    <input type={f.type} name={f.name} value={(form as Record<string,string>)[f.name]} onChange={handleChange} required
                       className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm transition-all" placeholder={f.placeholder} />
                   </div>
                 ))}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-dark mb-1.5">Home Address *</label>
+                <input type="text" name="address" value={form.address} onChange={handleChange} required
+                  className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm transition-all"
+                  placeholder="House number, street name, area" />
+              </div>
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-dark mb-1.5">State *</label>
+                  <select name="state" value={form.state} onChange={handleChange} required
+                    className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all">
+                    <option value="">Select state</option>
+                    {NIGERIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-dark mb-1.5">Local Government Area (LGA) *</label>
+                  <select name="lga" value={form.lga} onChange={handleChange} required disabled={!form.state}
+                    className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    <option value="">{form.state ? "Select LGA" : "Select state first"}</option>
+                    {availableLgas.map((lga) => <option key={lga} value={lga}>{lga}</option>)}
+                  </select>
+                </div>
               </div>
 
               <h3 className="font-bold text-dark text-base border-b border-light pb-3 pt-2">Business Details</h3>

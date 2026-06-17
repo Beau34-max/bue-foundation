@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Phone, MapPin, CheckCircle } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -11,12 +12,22 @@ export default function ContactPage() {
     name: "",
     email: "",
     phone: "",
+    address: "",
+    state: "",
+    lga: "",
     subject: "",
     message: "",
   });
 
+  const availableLgas = NIGERIA_STATES_LGAS[form.state] || [];
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForm((prev) => ({ ...prev, state: value, lga: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -152,7 +163,7 @@ export default function ContactPage() {
                   <button
                     onClick={() => {
                       setSubmitted(false);
-                      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+                      setForm({ name: "", email: "", phone: "", address: "", state: "", lga: "", subject: "", message: "" });
                     }}
                     className="px-6 py-3 bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
                   >
@@ -228,6 +239,31 @@ export default function ContactPage() {
                         <option value="Careers">Careers</option>
                         <option value="Media & Press">Media &amp; Press</option>
                         <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mb-5">
+                    <label className="block text-sm font-semibold text-dark mb-1.5">Home Address (Optional)</label>
+                    <input type="text" name="address" value={form.address} onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm transition-all"
+                      placeholder="House number, street name, area" />
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-5 mb-5">
+                    <div>
+                      <label className="block text-sm font-semibold text-dark mb-1.5">State (Optional)</label>
+                      <select name="state" value={form.state} onChange={handleChange}
+                        className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all">
+                        <option value="">Select state</option>
+                        {NIGERIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-dark mb-1.5">LGA (Optional)</label>
+                      <select name="lga" value={form.lga} onChange={handleChange}
+                        disabled={!form.state}
+                        className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        <option value="">{form.state ? "Select LGA" : "Select state first"}</option>
+                        {availableLgas.map((lga) => <option key={lga} value={lga}>{lga}</option>)}
                       </select>
                     </div>
                   </div>

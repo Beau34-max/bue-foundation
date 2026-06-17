@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp, Upload, FileText } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const jobs = [
   {
@@ -124,16 +125,26 @@ function JobCard({ job }: { job: (typeof jobs)[0] }) {
     name: "",
     email: "",
     phone: "",
+    address: "",
+    state: "",
+    lga: "",
     experience: "",
     linkedin: "",
     coverLetter: "",
     heardAbout: "",
   });
 
+  const availableLgas = NIGERIA_STATES_LGAS[form.state] || [];
+
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForm((prev) => ({ ...prev, state: value, lga: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -344,6 +355,39 @@ function JobCard({ job }: { job: (typeof jobs)[0] }) {
                     <option value="2-5 years">2–5 years</option>
                     <option value="5-10 years">5–10 years</option>
                     <option value="10+ years">10+ years</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-dark mb-1.5">
+                  Home Address *
+                </label>
+                <input
+                  type="text"
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all"
+                  placeholder="House number, street name, area"
+                />
+              </div>
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-dark mb-1.5">State *</label>
+                  <select name="state" value={form.state} onChange={handleChange} required
+                    className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all">
+                    <option value="">Select state</option>
+                    {NIGERIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-dark mb-1.5">Local Government Area (LGA) *</label>
+                  <select name="lga" value={form.lga} onChange={handleChange} required
+                    disabled={!form.state}
+                    className="w-full px-4 py-2.5 border border-light rounded-lg text-dark text-sm bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    <option value="">{form.state ? "Select LGA" : "Select state first"}</option>
+                    {availableLgas.map((lga) => <option key={lga} value={lga}>{lga}</option>)}
                   </select>
                 </div>
               </div>

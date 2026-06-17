@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle, Clock, Users, Award } from "lucide-react";
+import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const courses = [
   {
@@ -96,14 +97,19 @@ export default function TrainingPage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [openForm, setOpenForm] = useState<string | null>(null);
-  const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; motivation: string }>>({});
+  const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; address: string; state: string; lga: string; motivation: string }>>({});
 
   function getForm(id: string) {
-    return forms[id] || { name: "", email: "", phone: "", motivation: "" };
+    return forms[id] || { name: "", email: "", phone: "", address: "", state: "", lga: "", motivation: "" };
   }
 
-  function handleChange(id: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForms((prev) => ({ ...prev, [id]: { ...getForm(id), [e.target.name]: e.target.value } }));
+  function handleChange(id: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    if (name === "state") {
+      setForms((prev) => ({ ...prev, [id]: { ...getForm(id), state: value, lga: "" } }));
+    } else {
+      setForms((prev) => ({ ...prev, [id]: { ...getForm(id), [name]: value } }));
+    }
   }
 
   async function handleRegister(e: React.FormEvent, course: (typeof courses)[0]) {
@@ -112,6 +118,7 @@ export default function TrainingPage() {
     const data = new FormData();
     data.append("programme", `Training Registration – ${course.title}`);
     data.append("name", f.name); data.append("email", f.email); data.append("phone", f.phone);
+    data.append("address", f.address); data.append("state", f.state); data.append("lga", f.lga);
     data.append("course", course.title); data.append("courseStart", course.nextStart);
     data.append("motivation", f.motivation);
     try {
@@ -208,6 +215,24 @@ export default function TrainingPage() {
                           onChange={(e) => handleChange(course.id, e)} required placeholder={f.placeholder}
                           className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all" />
                       ))}
+                      <input type="text" name="address" value={getForm(course.id).address}
+                        onChange={(e) => handleChange(course.id, e)} placeholder="Home address"
+                        className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all" />
+                      <div className="grid grid-cols-2 gap-2">
+                        <select name="state" value={getForm(course.id).state}
+                          onChange={(e) => handleChange(course.id, e)}
+                          className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm bg-white transition-all">
+                          <option value="">State</option>
+                          {NIGERIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                        <select name="lga" value={getForm(course.id).lga}
+                          onChange={(e) => handleChange(course.id, e)}
+                          disabled={!getForm(course.id).state}
+                          className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                          <option value="">{getForm(course.id).state ? "LGA" : "State first"}</option>
+                          {(NIGERIA_STATES_LGAS[getForm(course.id).state] || []).map((lga) => <option key={lga} value={lga}>{lga}</option>)}
+                        </select>
+                      </div>
                       <textarea name="motivation" value={getForm(course.id).motivation}
                         onChange={(e) => handleChange(course.id, e)} rows={2} placeholder="Why do you want to join this course?"
                         className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all resize-none" />
