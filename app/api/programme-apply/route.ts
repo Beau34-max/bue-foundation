@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 
-const SMTP_TO = process.env.SMTP_TO || "info@buef.onmicrosoft.com";
-const SMTP_FROM = process.env.SMTP_USER || "info@buef.onmicrosoft.com";
+const resend = new Resend(process.env.RESEND_API_KEY);
+const MAIL_TO = process.env.SMTP_TO || "beatrice.ue@joybringerscharity.org";
+const MAIL_FROM = "BUE Foundation <onboarding@resend.dev>";
 
 function getSubmissionType(programme: string): string {
   const p = programme.toLowerCase();
@@ -45,23 +46,14 @@ export async function POST(request: NextRequest) {
       console.error("Supabase insert error (non-fatal):", dbErr);
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.office365.com",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: SMTP_FROM, pass: process.env.SMTP_PASS },
-      tls: { rejectUnauthorized: false },
-    });
-
     const fieldRows = Object.entries(fields)
       .map(([k, v]) =>
         `<tr><td style="padding:8px 0;font-weight:bold;width:180px;color:#4B1F6F;text-transform:capitalize;">${k.replace(/([A-Z])/g, " $1")}:</td><td>${v || "—"}</td></tr>`
       ).join("");
 
-    await transporter.sendMail({
-      from: `"BUE Foundation Website" <${SMTP_FROM}>`,
-      to: SMTP_TO,
+    await resend.emails.send({
+      from: MAIL_FROM,
+      to: [MAIL_TO],
       replyTo: email,
       subject: `New Application – ${programme} – ${name}`,
       html: `

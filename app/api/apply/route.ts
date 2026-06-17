@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 
-const SMTP_TO = process.env.SMTP_TO || "info@buef.onmicrosoft.com";
-const SMTP_FROM = process.env.SMTP_USER || "info@buef.onmicrosoft.com";
+const resend = new Resend(process.env.RESEND_API_KEY);
+const MAIL_TO = process.env.SMTP_TO || "beatrice.ue@joybringerscharity.org";
+const MAIL_FROM = "BUE Foundation <onboarding@resend.dev>";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     const heardAbout = formData.get("heardAbout") as string;
     const cvFile = formData.get("cv") as File | null;
 
-    // Save to Supabase — non-fatal, email always sends even if this fails
+    // Save to Supabase — non-fatal
     try {
       const supabase = getSupabase();
       if (supabase) {
@@ -42,26 +43,18 @@ export async function POST(request: NextRequest) {
       console.error("Supabase insert error (non-fatal):", dbErr);
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.office365.com",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: SMTP_FROM, pass: process.env.SMTP_PASS },
-      tls: { rejectUnauthorized: false },
-    });
-
-    const attachments: nodemailer.SendMailOptions["attachments"] = [];
+    const attachments: { filename: string; content: Buffer }[] = [];
     if (cvFile && cvFile.size > 0) {
       const buffer = Buffer.from(await cvFile.arrayBuffer());
-      attachments.push({ filename: cvFile.name, content: buffer, contentType: cvFile.type });
+      attachments.push({ filename: cvFile.name, content: buffer });
     }
 
-    await transporter.sendMail({
-      from: `"BUE Foundation Website" <${SMTP_FROM}>`,
-      to: SMTP_TO,
+    await resend.emails.send({
+      from: MAIL_FROM,
+      to: [MAIL_TO],
       replyTo: email,
       subject: `Job Application – ${position} – ${name}`,
+      attachments,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;color:#212121;">
           <div style="background:#4B1F6F;padding:20px 24px;border-radius:8px 8px 0 0;">
@@ -85,7 +78,6 @@ export async function POST(request: NextRequest) {
             </div>
           </div>
         </div>`,
-      attachments,
     });
 
     return NextResponse.json({ success: true });

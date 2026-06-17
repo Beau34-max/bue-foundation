@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 
-const SMTP_TO = process.env.SMTP_TO || "info@buef.onmicrosoft.com";
-const SMTP_FROM = process.env.SMTP_USER || "info@buef.onmicrosoft.com";
+const resend = new Resend(process.env.RESEND_API_KEY);
+const MAIL_TO = process.env.SMTP_TO || "beatrice.ue@joybringerscharity.org";
+const MAIL_FROM = "BUE Foundation <onboarding@resend.dev>";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,18 +27,9 @@ export async function POST(request: NextRequest) {
       console.error("Supabase insert error (non-fatal):", dbErr);
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.office365.com",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: SMTP_FROM, pass: process.env.SMTP_PASS },
-      tls: { rejectUnauthorized: false },
-    });
-
-    await transporter.sendMail({
-      from: `"BUE Foundation Website" <${SMTP_FROM}>`,
-      to: SMTP_TO,
+    await resend.emails.send({
+      from: MAIL_FROM,
+      to: [MAIL_TO],
       replyTo: email,
       subject: `Contact Form – ${subject} – ${name}`,
       html: `
