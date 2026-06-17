@@ -49,8 +49,9 @@ export async function POST(request: NextRequest) {
       host: process.env.SMTP_HOST || "smtp.office365.com",
       port: Number(process.env.SMTP_PORT) || 587,
       secure: false,
+      requireTLS: true,
       auth: { user: SMTP_FROM, pass: process.env.SMTP_PASS },
-      tls: { ciphers: "SSLv3" },
+      tls: { rejectUnauthorized: false },
     });
 
     const fieldRows = Object.entries(fields)
@@ -82,7 +83,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Programme apply error:", error);
-    return NextResponse.json({ success: false, error: "Failed to submit. Please try again." }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Programme apply error:", msg);
+    return NextResponse.json({ success: false, error: `Failed to submit: ${msg}` }, { status: 500 });
   }
 }

@@ -30,8 +30,9 @@ export async function POST(request: NextRequest) {
       host: process.env.SMTP_HOST || "smtp.office365.com",
       port: Number(process.env.SMTP_PORT) || 587,
       secure: false,
+      requireTLS: true,
       auth: { user: SMTP_FROM, pass: process.env.SMTP_PASS },
-      tls: { ciphers: "SSLv3" },
+      tls: { rejectUnauthorized: false },
     });
 
     await transporter.sendMail({
@@ -61,7 +62,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Volunteer API error:", error);
-    return NextResponse.json({ success: false, error: "Failed to submit application." }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Volunteer API error:", msg);
+    return NextResponse.json({ success: false, error: `Failed to submit application: ${msg}` }, { status: 500 });
   }
 }
