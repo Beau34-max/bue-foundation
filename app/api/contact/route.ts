@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, phone, subject, message } = body;
 
-    // Save to Supabase
-    await supabase.from("submissions").insert({
-      type: "contact_message",
-      name,
-      email,
-      phone: phone || null,
-      data: { subject, message },
-    });
+    const supabase = getSupabase();
+    if (supabase) {
+      await supabase.from("submissions").insert({
+        type: "contact_message",
+        name,
+        email,
+        phone: phone || null,
+        data: { subject, message },
+      });
+    }
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.office365.com",

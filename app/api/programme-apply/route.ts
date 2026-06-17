@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 function getSubmissionType(programme: string): string {
   const p = programme.toLowerCase();
@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
     const email = formData.get("email") as string;
     const phone = (formData.get("phone") as string) || null;
 
-    // Collect all other fields dynamically
     const fields: Record<string, string> = {};
     formData.forEach((value, key) => {
       if (!["programme", "name", "email", "phone"].includes(key) && typeof value === "string") {
@@ -27,14 +26,16 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Save to Supabase
-    await supabase.from("submissions").insert({
-      type: getSubmissionType(programme),
-      name,
-      email,
-      phone,
-      data: { programme, ...fields },
-    });
+    const supabase = getSupabase();
+    if (supabase) {
+      await supabase.from("submissions").insert({
+        type: getSubmissionType(programme),
+        name,
+        email,
+        phone,
+        data: { programme, ...fields },
+      });
+    }
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.office365.com",
