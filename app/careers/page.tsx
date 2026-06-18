@@ -40,45 +40,8 @@ const jobs = [
     ],
   },
   {
-    id: "social-media-manager",
-    title: "Social Media & Marketing Manager",
-    type: "Full-time",
-    location: "Remote / Hybrid",
-    salary: "₦40,000 per month",
-    department: "Marketing & Communications",
-    summary:
-      "The BUE Foundation is looking for a creative and organised Social Media & Marketing Manager to grow our online presence, manage our digital platforms, handle outreach calls, and support day-to-day admin tasks. You will be the voice of our brand online and help drive awareness of our life-changing programmes.",
-    responsibilities: [
-      "Manage and grow BUE Foundation's social media accounts (Facebook, Instagram, TikTok, LinkedIn)",
-      "Plan, create, and publish engaging posts, graphics, Reels, and stories on a consistent schedule",
-      "Respond to messages, comments, and enquiries across all platforms promptly and professionally",
-      "Make outreach calls to donors, partners, volunteers, media contacts, and beneficiaries",
-      "Design graphics and produce short videos using Canva or similar tools",
-      "Monitor analytics and prepare monthly reports on reach, engagement, and follower growth",
-      "Support with administrative tasks including scheduling, correspondence, and record-keeping",
-      "Assist with the planning and promotion of events, campaigns, and fundraising appeals",
-      "Keep website content updated in coordination with senior leadership",
-    ],
-    requirements: [
-      "Minimum 1 year experience managing social media for an organisation or brand",
-      "Excellent written and verbal communication skills in English",
-      "Proficiency in Canva or similar design tools for creating posts and graphics",
-      "Strong knowledge of Facebook, Instagram, TikTok, and LinkedIn best practices",
-      "Comfortable making professional outreach calls and conducting telephone follow-ups",
-      "Organised, self-motivated, and able to manage a content calendar independently",
-      "OND, HND, or BSc in Marketing, Mass Communication, or related field (or equivalent experience)",
-    ],
-    desirable: [
-      "Experience managing social media for an NGO or charity",
-      "Basic video editing skills (CapCut, InShot, Adobe Express, etc.)",
-      "Photography or videography skills",
-      "Knowledge of Facebook / Instagram Ads Manager",
-      "Existing portfolio of digital content or an engaged online following",
-    ],
-  },
-  {
     id: "fundraiser",
-    title: "Fundraising Manager",
+    title: "Fundraising & Marketing Manager",
     type: "Full-time",
     location: "Remote / Hybrid",
     salary: "₦50,000 per month",
@@ -568,7 +531,7 @@ export default function CareersPage() {
               Current Vacancies
             </h2>
             <p className="text-mid mt-5 max-w-xl mx-auto">
-              We currently have <strong>3 open positions</strong>. Click a role to view the full
+              We currently have <strong>2 open positions</strong>. Click a role to view the full
               description and apply — upload your CV directly from the form.
             </p>
           </div>
