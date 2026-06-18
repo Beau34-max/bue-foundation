@@ -4,7 +4,7 @@ import { getSupabase } from "@/lib/supabase";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const MAIL_TO = process.env.SMTP_TO || "beatrice.ue@joybringerscharity.org";
-const MAIL_FROM = "BUE Foundation <onboarding@resend.dev>";
+const MAIL_FROM = "BUE Foundation <noreply@joybringerscharity.org>";
 
 function getSubmissionType(programme: string): string {
   const p = programme.toLowerCase();
