@@ -54,6 +54,30 @@ export async function POST(request: NextRequest) {
         </div>`,
     });
 
+    // Confirmation email to sender — non-fatal
+    try {
+      await resend.emails.send({
+        from: MAIL_FROM,
+        to: [email],
+        subject: `Message Received | BUE Foundation`,
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:600px;color:#212121;">
+            <div style="background:#4B1F6F;padding:20px 24px;border-radius:8px 8px 0 0;">
+              <h2 style="color:white;margin:0;">Message Received</h2>
+              <p style="color:rgba(255,255,255,0.75);margin:4px 0 0;">BUE Foundation</p>
+            </div>
+            <div style="background:#f7f7f7;padding:24px;border-radius:0 0 8px 8px;border:1px solid #e8e8e8;border-top:none;">
+              <p>Dear <strong>${name}</strong>,</p>
+              <p>Thank you for getting in touch with the BUE Foundation. We have received your message regarding <strong>${subject}</strong> and a member of our team will respond within <strong>3 business days</strong>.</p>
+              <p>Visit us at <a href="https://buef.joybringerscharity.org" style="color:#4B1F6F;">buef.joybringerscharity.org</a> to learn more about our work.</p>
+              <p style="margin-top:24px;">Warm regards,<br/><strong>BUE Foundation Team</strong><br/><span style="color:#888;font-size:13px;">The Joybringers · Afikpo-North, Ebonyi State, Nigeria</span></p>
+            </div>
+          </div>`,
+      });
+    } catch (confErr) {
+      console.error("Confirmation email error (non-fatal):", confErr);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
