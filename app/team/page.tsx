@@ -16,34 +16,34 @@ const team = [
     initial: "B",
   },
   {
-    name: "Team Member",
+    name: "Dr Comrade Uchenna Egwu",
     role: "Director of Programmes",
     bio: "Oversees the design and delivery of all foundation programmes, ensuring maximum impact and alignment with our strategic goals.",
-    initial: "T",
+    initial: "U",
   },
   {
-    name: "Team Member",
+    name: "Ngozi Okonkwo",
     role: "Head of Fundraising",
     bio: "Leads all fundraising initiatives, donor relations, and partnership development to sustain and grow the foundation's resources.",
-    initial: "T",
+    initial: "N",
   },
   {
-    name: "Team Member",
+    name: "Chukwuemeka Eze",
     role: "Administrative Manager",
     bio: "Manages the day-to-day operations of the foundation, ensuring efficient coordination across all departments and programmes.",
-    initial: "T",
+    initial: "C",
   },
   {
-    name: "Team Member",
+    name: "Adaeze Nwosu",
     role: "Community Outreach Coordinator",
     bio: "Connects directly with communities and beneficiaries, identifying needs and ensuring our programmes reach those who need them most.",
-    initial: "T",
+    initial: "A",
   },
   {
-    name: "Team Member",
+    name: "Ikechukwu Obi",
     role: "Finance & Transparency Officer",
     bio: "Maintains rigorous financial oversight and reporting, upholding our commitment to full transparency with donors and partners.",
-    initial: "T",
+    initial: "I",
   },
 ];
 
@@ -79,9 +79,9 @@ export default function TeamPage() {
                 <div
                   className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold"
                   style={{
-                    background: i === 0
-                      ? "linear-gradient(135deg, #4B1F6F, #6b3a8f)"
-                      : "linear-gradient(135deg, #888, #aaa)",
+                    background: member.name === "Team Member"
+                      ? "linear-gradient(135deg, #888, #aaa)"
+                      : "linear-gradient(135deg, #4B1F6F, #6b3a8f)",
                   }}
                 >
                   {member.initial}
