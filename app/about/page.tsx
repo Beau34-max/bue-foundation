@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Target, Eye, Heart } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -73,10 +72,15 @@ export default function AboutPage() {
             empowerment.
           </p>
           <p className="text-mid leading-relaxed mb-4">
-            Located in Afikpo-North LGA, Ebonyi State, Nigeria, our foundation operates with love,
-            integrity, and dedication to community development. We recognise the daily struggles
-            faced by many Nigerians — and we are here to be a voice of hope, especially to those
-            who are often forgotten.
+            We are based in Afikpo-North LGA, Ebonyi State, Nigeria, and we serve communities
+            across the region with honesty, dedication, and a genuine desire to see people thrive.
+            We understand the difficulties many Nigerian families face every day, and we are here
+            to stand in the gap.
+          </p>
+          <p className="text-mid leading-relaxed mb-4">
+            Led by our CEO, our team works tirelessly to reach marginalised individuals and
+            families — providing the support they need to rebuild their lives and discover their
+            God-given potential.
           </p>
           <p className="text-mid leading-relaxed">
             Since our founding, we have touched hundreds of lives through scholarships, shelter
@@ -98,16 +102,16 @@ export default function AboutPage() {
                 The Heart Behind the Foundation
               </h2>
               <p className="text-mid leading-relaxed mb-4">
-                <strong className="text-dark">Beatrice Uchenna Egwu</strong> — lovingly called{" "}
-                <em>Mama Beatrice</em> by those she serves — founded this organisation out of her
-                personal experiences, strong Christian values, and an unshakable belief that
-                &ldquo;no one should be left behind.&rdquo;
+                Aunty Chy, as she is affectionately known, did not start with a plan or a
+                building. She started with a heart. Long before the BUE Foundation had a name,
+                she was already paying school fees for children who could not afford them, looking
+                after widows in her community, and opening her home to people who had nowhere else
+                to go — all from her own pocket.
               </p>
               <p className="text-mid leading-relaxed mb-4">
-                Long before there was a name or a structure, Mama Beatrice was already caring for
-                widows, sponsoring children&apos;s school fees, and sheltering the homeless from her
-                own resources. The foundation was created to institutionalise this selfless work —
-                so that help can reach even more people, far and wide.
+                As the need grew, it became clear that this work deserved a proper structure so it
+                could reach even more people. That is how the foundation was born — not from a
+                boardroom, but from a genuine desire to help.
               </p>
               <p className="text-mid leading-relaxed italic text-lg border-l-4 border-primary pl-4 py-2 mb-6">
                 &ldquo;This foundation was born from my heart. Long before we had a name or structure,
@@ -116,7 +120,7 @@ export default function AboutPage() {
                 to touch lives and give the forgotten ones a reason to smile again.&rdquo;
               </p>
               <p className="text-mid text-sm">
-                — <strong>Beatrice Uchenna Egwu</strong>, Founder &amp; CEO
+                — <strong>Beatrice Uchenna Egwu (Aunty Chy)</strong>, Founder &amp; CEO
               </p>
             </div>
             <div className="bg-primary/5 rounded-2xl p-10 border border-primary/20">
@@ -260,48 +264,6 @@ export default function AboutPage() {
           >
             Support Our Work <ArrowRight size={18} />
           </Link>
-        </div>
-      </section>
-
-      {/* Our Partners */}
-      <section className="py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
-              Who We Work With
-            </p>
-            <h2 className="text-3xl font-bold text-dark section-heading-center">Our Partners</h2>
-            <p className="text-mid mt-5 max-w-2xl mx-auto">
-              We are proud to work alongside esteemed organisations who share our vision and help
-              amplify our impact across communities.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-8 max-w-3xl mx-auto">
-            {/* Coseng Limited */}
-            <div className="bg-page rounded-2xl p-8 border border-light flex flex-col items-center text-center">
-              <div className="h-16 flex items-center justify-center mb-5">
-                <Image src="/coseng-logo.png" alt="Coseng Limited UK" width={180} height={64} className="object-contain" />
-              </div>
-              <h3 className="font-bold text-dark text-lg mb-2">Coseng Limited UK</h3>
-              <p className="text-mid text-sm leading-relaxed">
-                Founded in 2020, Coseng Limited UK is a valued partner committed to sustainable
-                development and social impact. Their support has been instrumental in enhancing our
-                outreach and sustaining our community programmes.
-              </p>
-            </div>
-            {/* Joybringers */}
-            <div className="bg-page rounded-2xl p-8 border border-light flex flex-col items-center text-center">
-              <div className="h-16 flex items-center justify-center mb-5">
-                <Image src="/joybringers-logo.png" alt="Joybringers Ltd" width={180} height={64} className="object-contain" />
-              </div>
-              <h3 className="font-bold text-dark text-lg mb-2">Joybringers Ltd</h3>
-              <p className="text-mid text-sm leading-relaxed">
-                Joybringers Ltd is a UK-based charity partner whose mission aligns closely with
-                ours. Together we channel resources and expertise to maximise our reach across
-                Nigeria and the diaspora community.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 

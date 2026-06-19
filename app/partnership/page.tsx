@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Building2, Globe, Handshake, TrendingUp, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -143,6 +144,46 @@ export default function PartnershipPage() {
                 <p className="text-white/85 text-sm leading-relaxed">{b}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Current Partners */}
+      <section className="py-20 bg-page">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
+              Who We Work With
+            </p>
+            <h2 className="text-3xl font-bold text-dark section-heading-center">Our Current Partners</h2>
+            <p className="text-mid mt-5 max-w-2xl mx-auto">
+              We are proud to work alongside these organisations who share our vision and help
+              amplify our impact across communities.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl p-8 border border-light flex flex-col items-center text-center">
+              <div className="h-16 flex items-center justify-center mb-5">
+                <Image src="/coseng-logo.png" alt="Coseng Limited UK" width={180} height={64} className="object-contain" />
+              </div>
+              <h3 className="font-bold text-dark text-lg mb-2">Coseng Limited UK</h3>
+              <p className="text-mid text-sm leading-relaxed">
+                Founded in 2020, Coseng Limited UK is a valued partner committed to sustainable
+                development and social impact. Their support has been instrumental in enhancing our
+                outreach and sustaining our community programmes.
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl p-8 border border-light flex flex-col items-center text-center">
+              <div className="h-16 flex items-center justify-center mb-5">
+                <Image src="/joybringers-logo.png" alt="Joybringers Ltd" width={180} height={64} className="object-contain" />
+              </div>
+              <h3 className="font-bold text-dark text-lg mb-2">Joybringers Ltd</h3>
+              <p className="text-mid text-sm leading-relaxed">
+                Joybringers Ltd is a UK-based charity partner whose mission aligns closely with
+                ours. Together we channel resources and expertise to maximise our reach across
+                Nigeria and the diaspora community.
+              </p>
+            </div>
           </div>
         </div>
       </section>
