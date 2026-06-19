@@ -1,35 +1,53 @@
 import Link from "next/link";
-import { Heart, GraduationCap, Home, Briefcase, ArrowRight, Quote } from "lucide-react";
+import { Heart, GraduationCap, Home, Briefcase, ArrowRight, Quote, TrendingUp, Users } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "BUE Foundation – The Joybringers",
 };
 
-const focusAreas = [
-  {
-    icon: Heart,
-    title: "Financial Support",
-    description:
-      "Providing emergency and sustained financial assistance to individuals and families in critical need across our communities.",
-  },
+const programmes = [
   {
     icon: GraduationCap,
-    title: "Scholarships for Children & Youth",
+    title: "Scholarships",
     description:
-      "Funding education from primary school through university so no child's potential is limited by their economic background.",
-  },
-  {
-    icon: Home,
-    title: "Shelter for the Homeless",
-    description:
-      "Offering temporary shelter, transitional housing support, and long-term solutions for those without a safe home.",
+      "We fund education from primary school through university so no child's future is limited by their family's financial situation.",
+    href: "/programmes/scholarships",
   },
   {
     icon: Briefcase,
-    title: "Skill Acquisition & Training",
+    title: "Skills Training",
     description:
-      "Running vocational and entrepreneurship programmes that equip young people and adults with sustainable livelihoods.",
+      "Free vocational programmes in tailoring, catering, ICT, agriculture, and more — giving people practical skills for a better livelihood.",
+    href: "/programmes/training",
+  },
+  {
+    icon: TrendingUp,
+    title: "Enterprise Fund",
+    description:
+      "Supporting young entrepreneurs and small businesses with funding and mentorship to help them grow and become self-sustaining.",
+    href: "/programmes/enterprise-fund",
+  },
+  {
+    icon: Users,
+    title: "Community Events",
+    description:
+      "Outreach events focused on health, education, and empowerment — bringing resources and awareness directly into local communities.",
+    href: "/programmes/events",
+  },
+  {
+    icon: Heart,
+    title: "Financial Aid",
+    description:
+      "Emergency and ongoing financial support for individuals and families in critical need — helping them meet basic daily needs.",
+    href: "/donate",
+  },
+  {
+    icon: Home,
+    title: "Shelter Support",
+    description:
+      "Providing temporary shelter and transitional housing assistance to the homeless and displaced across our communities.",
+    href: "/contact",
   },
 ];
 
@@ -145,37 +163,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Focus Areas */}
+      {/* What We Do */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
             <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
-              What We Do
+              Our Programmes
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold text-dark section-heading-center">
-              Our Focus Areas
+              What We Do
             </h2>
             <p className="text-mid mt-6 max-w-2xl mx-auto">
-              Our work is centred on four pillars addressing the most critical needs in underserved
-              communities.
+              From scholarships to shelter, skills training to enterprise support — we tackle the
+              most pressing needs in underserved communities, one life at a time.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {focusAreas.map((area) => {
-              const Icon = area.icon;
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {programmes.map((prog) => {
+              const Icon = prog.icon;
               return (
-                <div
-                  key={area.title}
-                  className="bg-page rounded-xl p-6 border border-light card-hover text-center"
+                <Link
+                  key={prog.title}
+                  href={prog.href}
+                  className="group bg-page rounded-2xl p-7 border border-light hover:border-primary/30 hover:shadow-md transition-all flex flex-col"
                 >
-                  <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Icon size={28} className="text-primary" />
+                  <div className="w-13 h-13 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
+                    <Icon size={26} className="text-primary" />
                   </div>
-                  <h3 className="font-bold text-dark mb-3">{area.title}</h3>
-                  <p className="text-mid text-sm leading-relaxed">{area.description}</p>
-                </div>
+                  <h3 className="font-bold text-dark text-lg mb-3 group-hover:text-primary transition-colors">
+                    {prog.title}
+                  </h3>
+                  <p className="text-mid text-sm leading-relaxed flex-1">{prog.description}</p>
+                  <div className="mt-5 flex items-center gap-1 text-primary text-sm font-semibold">
+                    Learn more <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
               );
             })}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              href="/programmes"
+              className="inline-flex items-center gap-2 px-7 py-3 border-2 border-primary text-primary font-semibold rounded-md hover:bg-primary hover:text-white transition-colors"
+            >
+              View All Programmes <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>
