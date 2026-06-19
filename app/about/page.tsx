@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Target, Eye, Heart } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -9,34 +10,34 @@ export const metadata: Metadata = {
 };
 
 const objectives = [
-  "Provide financial support to widows, orphans, and vulnerable individuals.",
-  "Award scholarships and educational grants to children and youth in need.",
-  "Offer shelter and housing assistance to the homeless and displaced.",
-  "Deliver vocational training and skill acquisition programmes.",
-  "Partner with government and international bodies to scale community impact.",
-  "Promote transparency and accountability in the use of all donations and resources.",
+  "Provide financial aid to struggling families, widows, and orphans.",
+  "Offer scholarships and educational sponsorships to brilliant but disadvantaged children and youth.",
+  "Support the homeless and displaced with shelter and basic survival needs.",
+  "Organise free skills acquisition programmes — tailoring, catering, ICT, agriculture, and more — for unemployed youth and women.",
+  "Create community outreach initiatives focused on health, education, and economic empowerment.",
+  "Partner with other NGOs, government bodies, and individuals for sustainable social impact.",
 ];
 
 const coreValues = [
   {
     value: "Compassion",
-    description: "We approach every individual with empathy, dignity, and genuine care.",
+    description: "We serve with love — approaching every person with empathy, dignity, and genuine care.",
   },
   {
     value: "Transparency",
-    description: "We maintain open, honest accounting of all funds and activities.",
+    description: "We handle all resources with integrity and accountability. Our donors deserve full honesty.",
   },
   {
     value: "Community",
-    description: "We believe change happens when communities are empowered to lead.",
+    description: "We are committed to grassroots development — change that starts within the community itself.",
   },
   {
     value: "Empowerment",
-    description: "We give people the tools to build sustainable, independent lives.",
+    description: "We don't just give handouts. We equip people with skills and tools for long-term success.",
   },
   {
     value: "Service",
-    description: "We are driven by a calling to serve those who need it most.",
+    description: "We serve first, with no expectation of reward. Giving is our calling, not our transaction.",
   },
 ];
 
@@ -67,18 +68,20 @@ export default function AboutPage() {
           <p className="text-mid leading-relaxed mb-4 text-lg">
             The <strong className="text-dark">Beatrice Uchenna Egwu Foundation</strong> — popularly
             known as <strong className="text-primary">The Joybringers</strong> — is a registered
-            Non-Governmental Organisation (NGO No. 8420341) headquartered in Afikpo-North LGA,
-            Ebonyi State, Nigeria.
+            Non-Governmental Organisation (NGO No. 8420341) founded with one sincere goal: to uplift
+            the lives of the less privileged through practical support, education, shelter, and
+            empowerment.
           </p>
           <p className="text-mid leading-relaxed mb-4">
-            We are a faith-inspired, community-driven organisation dedicated to addressing the
-            critical social needs of the most vulnerable members of society — including widows,
-            orphans, the homeless, and youth trapped in cycles of poverty.
+            Located in Afikpo-North LGA, Ebonyi State, Nigeria, our foundation operates with love,
+            integrity, and dedication to community development. We recognise the daily struggles
+            faced by many Nigerians — and we are here to be a voice of hope, especially to those
+            who are often forgotten.
           </p>
           <p className="text-mid leading-relaxed">
-            Since our founding, we have touched hundreds of lives through targeted intervention
-            programmes, distributing scholarships, providing shelter, delivering vocational training,
-            and offering financial assistance where it is needed most.
+            Since our founding, we have touched hundreds of lives through scholarships, shelter
+            support, vocational training, and financial assistance — delivered directly to those
+            who need it most.
           </p>
         </div>
       </section>
@@ -96,20 +99,21 @@ export default function AboutPage() {
               </h2>
               <p className="text-mid leading-relaxed mb-4">
                 <strong className="text-dark">Beatrice Uchenna Egwu</strong> — lovingly called{" "}
-                <em>Aunty Chy</em> by those she serves — founded this organisation out of a
-                deeply personal conviction: that no one should suffer alone when a community can
-                stand together.
+                <em>Mama Beatrice</em> by those she serves — founded this organisation out of her
+                personal experiences, strong Christian values, and an unshakable belief that
+                &ldquo;no one should be left behind.&rdquo;
               </p>
               <p className="text-mid leading-relaxed mb-4">
-                Having witnessed first-hand the devastating effects of poverty, educational
-                exclusion, and homelessness in her community, Aunty Chy resolved to be the
-                change. She channelled her passion, resources, and network into creating an
-                organisation that would bring real, lasting change to the most marginalised.
+                Long before there was a name or a structure, Mama Beatrice was already caring for
+                widows, sponsoring children&apos;s school fees, and sheltering the homeless from her
+                own resources. The foundation was created to institutionalise this selfless work —
+                so that help can reach even more people, far and wide.
               </p>
               <p className="text-mid leading-relaxed italic text-lg border-l-4 border-primary pl-4 py-2 mb-6">
-                &ldquo;When I see the smile on the face of a child who can now go to school, or a widow
-                who no longer goes to bed hungry — that is what drives me. Every life has value, and
-                our job is to help people discover theirs.&rdquo;
+                &ldquo;This foundation was born from my heart. Long before we had a name or structure,
+                we were helping people from our little resources. I believe that giving is not about
+                how much you have, but how much you care. Through this foundation, we will continue
+                to touch lives and give the forgotten ones a reason to smile again.&rdquo;
               </p>
               <p className="text-mid text-sm">
                 — <strong>Beatrice Uchenna Egwu</strong>, Founder &amp; CEO
@@ -236,16 +240,19 @@ export default function AboutPage() {
             Why We Do What We Do
           </h2>
           <p className="text-mid text-lg leading-relaxed mb-6">
-            Poverty is not just the absence of money — it is the absence of hope, opportunity, and
-            dignity. Across Ebonyi State and beyond, thousands of children cannot attend school,
-            families sleep without a roof, and skilled adults cannot find work simply because they
-            lack resources and support.
+            In Nigeria today, many children drop out of school due to lack of funds. Many families
+            go to bed hungry. Young people roam the streets with untapped potential. This is not
+            the Nigeria we dream of.
+          </p>
+          <p className="text-mid text-lg leading-relaxed mb-6">
+            At the BUE Foundation, we believe that every life matters — and that a little support
+            at the right time can change a person&apos;s entire story. In many communities, people
+            suffer not because they are lazy, but because they lack opportunity.
           </p>
           <p className="text-mid text-lg leading-relaxed mb-10">
-            We do what we do because we believe this should not — and does not have to — be the
-            case. With generosity, community action, and structured support, every single life can
-            be changed. That is not idealism; it is what we see happening every day in the
-            communities we serve.
+            We are here to bridge the gap. With the help of kind-hearted partners and donors, we
+            are working to break cycles of poverty and bring hope to families who have lost it.
+            Together, we can light up many dark corners of our communities.
           </p>
           <Link
             href="/donate"
@@ -253,6 +260,78 @@ export default function AboutPage() {
           >
             Support Our Work <ArrowRight size={18} />
           </Link>
+        </div>
+      </section>
+
+      {/* Our Partners */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
+              Who We Work With
+            </p>
+            <h2 className="text-3xl font-bold text-dark section-heading-center">Our Partners</h2>
+            <p className="text-mid mt-5 max-w-2xl mx-auto">
+              We are proud to work alongside esteemed organisations who share our vision and help
+              amplify our impact across communities.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            {/* Coseng Limited */}
+            <div className="bg-page rounded-2xl p-8 border border-light flex flex-col items-center text-center">
+              <div className="h-16 flex items-center justify-center mb-5">
+                <Image src="/coseng-logo.png" alt="Coseng Limited UK" width={180} height={64} className="object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                <span className="text-2xl font-extrabold text-dark tracking-tight hidden">COSENG LIMITED</span>
+              </div>
+              <h3 className="font-bold text-dark text-lg mb-2">Coseng Limited UK</h3>
+              <p className="text-mid text-sm leading-relaxed">
+                Founded in 2020, Coseng Limited UK is a valued partner committed to sustainable
+                development and social impact. Their support has been instrumental in enhancing our
+                outreach and sustaining our community programmes.
+              </p>
+            </div>
+            {/* Joybringers */}
+            <div className="bg-page rounded-2xl p-8 border border-light flex flex-col items-center text-center">
+              <div className="h-16 flex items-center justify-center mb-5">
+                <Image src="/joybringers-logo.png" alt="Joybringers Ltd" width={180} height={64} className="object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                <span className="text-2xl font-extrabold text-dark tracking-tight hidden">JOYBRINGERS</span>
+              </div>
+              <h3 className="font-bold text-dark text-lg mb-2">Joybringers Ltd</h3>
+              <p className="text-mid text-sm leading-relaxed">
+                Joybringers Ltd is a UK-based charity partner whose mission aligns closely with
+                ours. Together we channel resources and expertise to maximise our reach across
+                Nigeria and the diaspora community.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Join Us */}
+      <section className="py-20 bg-page">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
+            Get Involved
+          </p>
+          <h2 className="text-3xl font-bold text-dark mb-4 section-heading-center">Join Us</h2>
+          <p className="text-mid text-lg leading-relaxed mb-8">
+            Want to support our work? Volunteer with us, make a donation, or collaborate on a
+            project. Every contribution — big or small — makes a real difference.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/volunteer"
+              className="px-8 py-4 bg-primary text-white font-bold text-lg rounded-md hover:bg-primary-dark transition-colors">
+              Volunteer with Us
+            </Link>
+            <Link href="/donate"
+              className="px-8 py-4 border-2 border-primary text-primary font-bold text-lg rounded-md hover:bg-primary hover:text-white transition-colors">
+              Make a Donation
+            </Link>
+            <Link href="/contact"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-dark font-semibold text-lg rounded-md underline hover:text-primary transition-colors">
+              Contact Us <ArrowRight size={18} />
+            </Link>
+          </div>
         </div>
       </section>
     </>
