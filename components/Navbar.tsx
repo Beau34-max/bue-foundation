@@ -73,7 +73,8 @@ export default function Navbar() {
               {navLinks.map((link) =>
                 link.children ? (
                   <div key={link.href} className="relative group">
-                    <button
+                    <Link
+                      href={link.href}
                       className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                         isActive(link.href)
                           ? "text-primary bg-primary/10"
@@ -82,7 +83,7 @@ export default function Navbar() {
                     >
                       {link.label}
                       <ChevronDown size={13} />
-                    </button>
+                    </Link>
                     <div className="absolute top-full left-0 mt-1 w-52 bg-white shadow-lg rounded-xl py-1.5 border border-light opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
                       {link.children.map((child) => (
                         <Link
