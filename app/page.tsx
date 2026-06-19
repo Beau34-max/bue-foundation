@@ -97,9 +97,9 @@ export default function HomePage() {
             to Communities in Need
           </h1>
           <p className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            The Beatrice Uchenna Egwu Foundation is a registered Nigerian NGO dedicated to
-            empowering the vulnerable through education, financial aid, shelter, and skill
-            development.
+            The Beatrice Uchenna Egwu Foundation is a registered NGO in Nigeria dedicated to
+            empowering young people and families through education, scholarships, financial aid,
+            shelter, and skill development.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
