@@ -8,8 +8,15 @@ import { Menu, X, ChevronDown } from "lucide-react";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Meet Our Team", href: "/team" },
+  {
+    label: "About",
+    href: "/about",
+    children: [
+      { label: "About Us", href: "/about" },
+      { label: "Meet Our Team", href: "/team" },
+      { label: "Partnership", href: "/partnership" },
+    ],
+  },
   {
     label: "Programmes",
     href: "/programmes",
@@ -21,8 +28,8 @@ const navLinks = [
     ],
   },
   { label: "Volunteer", href: "/volunteer" },
-  { label: "Partnership", href: "/partnership" },
   { label: "Careers", href: "/careers" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {

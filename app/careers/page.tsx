@@ -472,7 +472,7 @@ function JobCard({ job }: { job: (typeof jobs)[0] }) {
               </div>
               <p className="text-xs text-mid text-center">
                 Your CV will be sent directly to{" "}
-                <strong>info@buef.onmicrosoft.com</strong>
+                <strong>beatrice.ue@joybringerscharity.org</strong>
               </p>
             </form>
           )}
@@ -557,7 +557,7 @@ export default function CareersPage() {
             brief introduction — we will keep your details on file for future opportunities.
           </p>
           <a
-            href="mailto:info@buef.onmicrosoft.com?subject=General Application – BUE Foundation"
+            href="mailto:beatrice.ue@joybringerscharity.org?subject=General Application – BUE Foundation"
             className="inline-block px-8 py-3.5 bg-accent text-dark font-bold rounded-md hover:opacity-90 transition-opacity"
           >
             Send a General Application

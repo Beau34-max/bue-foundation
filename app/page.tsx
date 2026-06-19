@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "BUE Foundation – The Joybringers",
+  description:
+    "The Beatrice Uchenna Egwu Foundation (The Joybringers) is a registered NGO in Nigeria empowering young people and families through scholarships, financial aid, skills training, and shelter support.",
 };
 
 const programmes = [
@@ -13,6 +15,7 @@ const programmes = [
     description:
       "We fund education from primary school through university so no child's future is limited by their family's financial situation.",
     href: "/programmes/scholarships",
+    cta: "Learn more",
   },
   {
     icon: Briefcase,
@@ -20,6 +23,7 @@ const programmes = [
     description:
       "Free vocational programmes in tailoring, catering, ICT, agriculture, and more — giving people practical skills for a better livelihood.",
     href: "/programmes/training",
+    cta: "Learn more",
   },
   {
     icon: TrendingUp,
@@ -27,6 +31,7 @@ const programmes = [
     description:
       "Supporting young entrepreneurs and small businesses with funding and mentorship to help them grow and become self-sustaining.",
     href: "/programmes/enterprise-fund",
+    cta: "Learn more",
   },
   {
     icon: Users,
@@ -34,6 +39,7 @@ const programmes = [
     description:
       "Outreach events focused on health, education, and empowerment — bringing resources and awareness directly into local communities.",
     href: "/programmes/events",
+    cta: "Learn more",
   },
   {
     icon: Heart,
@@ -41,6 +47,7 @@ const programmes = [
     description:
       "Emergency and ongoing financial support for individuals and families in critical need — helping them meet basic daily needs.",
     href: "/donate",
+    cta: "Support now",
   },
   {
     icon: Home,
@@ -48,6 +55,7 @@ const programmes = [
     description:
       "Providing temporary shelter and transitional housing assistance to the homeless and displaced across our communities.",
     href: "/contact",
+    cta: "Get in touch",
   },
 ];
 
@@ -138,7 +146,7 @@ export default function HomePage() {
           <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M0 60V30C240 0 480 60 720 30C960 0 1200 60 1440 30V60H0Z"
-              fill="#F7F7F7"
+              fill="white"
             />
           </svg>
         </div>
@@ -195,7 +203,7 @@ export default function HomePage() {
                   </h3>
                   <p className="text-mid text-sm leading-relaxed flex-1">{prog.description}</p>
                   <div className="mt-5 flex items-center gap-1 text-primary text-sm font-semibold">
-                    Learn more <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    {prog.cta} <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               );

@@ -204,7 +204,7 @@ export default function PartnershipPage() {
               Contact Us <ArrowRight size={16} />
             </Link>
             <a
-              href="mailto:info@buef.onmicrosoft.com"
+              href="mailto:beatrice.ue@joybringerscharity.org"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-primary text-primary font-bold rounded-md hover:bg-primary/5 transition-colors"
             >
               Email Directly

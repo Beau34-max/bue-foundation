@@ -28,7 +28,6 @@ export default function DonatePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [currency, setCurrency] = useState("GBP");
-  const [frequency, setFrequency] = useState<"one-time" | "monthly">("one-time");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -66,10 +65,16 @@ export default function DonatePage() {
       metadata: {
         custom_fields: [
           { display_name: "Donor Name", variable_name: "donor_name", value: name },
-          { display_name: "Frequency", variable_name: "frequency", value: frequency },
         ],
       },
-      callback: () => {
+      callback: async () => {
+        try {
+          await fetch("/api/donate-confirm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, amount: finalAmount, currency }),
+          });
+        } catch {}
         setSubmitted(true);
         setLoading(false);
       },
@@ -140,26 +145,13 @@ export default function DonatePage() {
                     </p>
                   </div>
                   <div className="p-6 sm:p-8">
-                    {/* Frequency */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-semibold text-dark mb-3">
-                        Donation Frequency
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        {(["one-time", "monthly"] as const).map((f) => (
-                          <button
-                            key={f}
-                            onClick={() => setFrequency(f)}
-                            className={`py-2.5 rounded-lg text-sm font-semibold border-2 transition-all ${
-                              frequency === f
-                                ? "border-primary bg-primary text-white"
-                                : "border-light text-mid hover:border-primary/50"
-                            }`}
-                          >
-                            {f === "one-time" ? "One-time" : "Monthly"}
-                          </button>
-                        ))}
-                      </div>
+                    {/* Monthly giving note */}
+                    <div className="mb-6 px-4 py-3 bg-primary/5 border border-primary/20 rounded-lg text-sm text-mid">
+                      <strong className="text-dark">Monthly giving:</strong> To set up a regular monthly donation, please{" "}
+                      <a href="mailto:beatrice.ue@joybringerscharity.org" className="text-primary font-semibold hover:underline">
+                        contact us
+                      </a>{" "}
+                      and we will arrange a standing order for you.
                     </div>
 
                     {/* Currency */}
@@ -260,7 +252,7 @@ export default function DonatePage() {
                     >
                       {loading
                         ? "Processing..."
-                        : `Donate ${currency === "GBP" ? "£" : currency === "NGN" ? "₦" : "$"}${finalAmount || "..."} ${frequency === "monthly" ? "/ month" : ""}`}
+                        : `Donate ${currency === "GBP" ? "£" : currency === "NGN" ? "₦" : currency === "EUR" ? "€" : "$"}${finalAmount || "..."}`}
                     </button>
 
                     <div className="mt-4 flex items-center justify-center gap-2 text-mid text-xs">
@@ -334,7 +326,7 @@ export default function DonatePage() {
                   </p>
                   <p className="pt-2">
                     <a
-                      href="mailto:info@buef.onmicrosoft.com"
+                      href="mailto:beatrice.ue@joybringerscharity.org"
                       className="text-primary font-semibold hover:underline"
                     >
                       Email us
