@@ -280,8 +280,7 @@ export default function AboutPage() {
             {/* Coseng Limited */}
             <div className="bg-page rounded-2xl p-8 border border-light flex flex-col items-center text-center">
               <div className="h-16 flex items-center justify-center mb-5">
-                <Image src="/coseng-logo.png" alt="Coseng Limited UK" width={180} height={64} className="object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                <span className="text-2xl font-extrabold text-dark tracking-tight hidden">COSENG LIMITED</span>
+                <Image src="/coseng-logo.png" alt="Coseng Limited UK" width={180} height={64} className="object-contain" />
               </div>
               <h3 className="font-bold text-dark text-lg mb-2">Coseng Limited UK</h3>
               <p className="text-mid text-sm leading-relaxed">
@@ -293,8 +292,7 @@ export default function AboutPage() {
             {/* Joybringers */}
             <div className="bg-page rounded-2xl p-8 border border-light flex flex-col items-center text-center">
               <div className="h-16 flex items-center justify-center mb-5">
-                <Image src="/joybringers-logo.png" alt="Joybringers Ltd" width={180} height={64} className="object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                <span className="text-2xl font-extrabold text-dark tracking-tight hidden">JOYBRINGERS</span>
+                <Image src="/joybringers-logo.png" alt="Joybringers Ltd" width={180} height={64} className="object-contain" />
               </div>
               <h3 className="font-bold text-dark text-lg mb-2">Joybringers Ltd</h3>
               <p className="text-mid text-sm leading-relaxed">
