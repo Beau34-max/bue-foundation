@@ -8,7 +8,16 @@ export async function POST(request: NextRequest) {
   const { type, data } = await request.json();
   if (!type || !data) return NextResponse.json({ error: "Missing type or data" }, { status: 400 });
 
-  const { error } = await supabase.from("submissions").insert({ type, data });
+  // Lift a human-readable label into the top-level `name` column so Supabase is readable
+  const nameMap: Record<string, string> = {
+    beneficiary_supported: data.beneficiary_name,
+    grant_received: data.funder_name,
+    asset: data.asset_name,
+    event_attendance: data.event,
+  };
+  const name: string | null = nameMap[type] ?? null;
+
+  const { error } = await supabase.from("submissions").insert({ type, name, data });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
