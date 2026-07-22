@@ -7,6 +7,7 @@ import {
   Mail, ShieldCheck, Shield,
 } from "lucide-react";
 import type { Job, BuefEvent } from "@/lib/types";
+import DataEntryTab from "@/components/admin/DataEntryTab";
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -147,7 +148,7 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
 export default function AdminPage() {
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
-  const [tab, setTab] = useState<"jobs" | "events" | "users">("jobs");
+  const [tab, setTab] = useState<"jobs" | "events" | "data" | "users">("jobs");
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [events, setEvents] = useState<BuefEvent[]>([]);
@@ -315,6 +316,7 @@ export default function AdminPage() {
   const tabs = [
     { id: "jobs" as const, label: `Jobs (${jobs.length})` },
     { id: "events" as const, label: `Events (${events.length})` },
+    { id: "data" as const, label: "Data Entry" },
     ...(isSuperAdmin ? [{ id: "users" as const, label: "Users" }] : []),
   ];
 
@@ -509,6 +511,9 @@ export default function AdminPage() {
                 )}
               </div>
             )}
+
+            {/* ── DATA ENTRY ────────────────────────────────────────────── */}
+            {tab === "data" && <DataEntryTab />}
 
             {/* ── USERS (super_admin only) ───────────────────────────────── */}
             {tab === "users" && isSuperAdmin && (
