@@ -516,7 +516,7 @@ export default function AdminPage() {
 
             {/* ── DATA ENTRY ────────────────────────────────────────────── */}
             {tab === "data" && <DataEntryTab />}
-            {tab === "applications" && <ApplicationsTab />}
+            {tab === "applications" && <ApplicationsTab isSuperAdmin={isSuperAdmin} />}
 
             {/* ── USERS (super_admin only) ───────────────────────────────── */}
             {tab === "users" && isSuperAdmin && (
