@@ -1,68 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, MapPin, Clock, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Calendar, MapPin, Clock, CheckCircle, Loader2 } from "lucide-react";
 import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
-
-const events = [
-  {
-    id: "biz-seminar-1",
-    title: "Business Foundations Seminar",
-    type: "Business Seminar",
-    date: "Saturday, 1 August 2026",
-    time: "9:00 AM – 2:00 PM",
-    location: "BUE Foundation Hall, Afikpo-North, Ebonyi State",
-    description: "A practical, hands-on seminar covering the fundamentals of starting and running a profitable business in Nigeria. Topics include business registration, pricing, bookkeeping, customer acquisition, and digital marketing.",
-    speakers: ["Beatrice Uchenna Egwu – BUE Foundation", "TBA – Business Development Expert"],
-    price: "Free",
-    seats: "Limited to 80 attendees",
-    tags: ["Business", "Free Entry"],
-  },
-  {
-    id: "enterprise-bootcamp",
-    title: "Enterprise Fund Bootcamp",
-    type: "Workshop",
-    date: "Saturday, 15 August 2026",
-    time: "10:00 AM – 4:00 PM",
-    location: "Afikpo Community Centre, Ebonyi State",
-    description: "A full-day bootcamp for applicants and recipients of the BUE Enterprise Fund. Covers business planning, financial management, profit reporting, and mentorship pairing. Mandatory for approved Enterprise Fund recipients.",
-    speakers: ["BUE Enterprise Committee", "Guest Mentors"],
-    price: "Free (Enterprise Fund applicants only)",
-    seats: "Invitation-only for shortlisted applicants",
-    tags: ["Enterprise Fund", "Workshop"],
-  },
-  {
-    id: "community-outreach",
-    title: "Community Outreach Day",
-    type: "Community Event",
-    date: "Saturday, 29 August 2026",
-    time: "8:00 AM – 1:00 PM",
-    location: "Ezi Agha-Orie Ukpa, Afikpo-North",
-    description: "Join us as we distribute food packages, school supplies, and hygiene kits to families in need. Volunteers welcome. Come and be a Joybringer!",
-    speakers: [],
-    price: "Free",
-    seats: "Open to all",
-    tags: ["Community", "Volunteer", "Free Entry"],
-  },
-  {
-    id: "fundraising-gala",
-    title: "Annual Joybringers Gala",
-    type: "Fundraising Gala",
-    date: "Saturday, 26 September 2026",
-    time: "6:00 PM – 10:00 PM",
-    location: "Venue TBC — Ebonyi State",
-    description: "Our flagship annual fundraising dinner celebrating our impact and raising funds for the year ahead. Includes awards, live music, testimonies from beneficiaries, and a charity auction.",
-    speakers: ["Beatrice Uchenna Egwu – CEO", "Guest of Honour TBA"],
-    price: "₦5,000 per ticket",
-    seats: "150 seats available",
-    tags: ["Fundraising", "Gala", "Ticketed"],
-  },
-];
+import type { BuefEvent } from "@/lib/types";
 
 export default function EventsPage() {
+  const [events, setEvents] = useState<BuefEvent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; address: string; state: string; lga: string; dietary: string }>>({});
+
+  useEffect(() => {
+    fetch("/api/events")
+      .then(r => r.json())
+      .then(data => setEvents(Array.isArray(data) ? data : []))
+      .finally(() => setLoading(false));
+  }, []);
 
   function getForm(id: string) {
     return forms[id] || { name: "", email: "", phone: "", address: "", state: "", lga: "", dietary: "" };
@@ -77,7 +32,7 @@ export default function EventsPage() {
     }
   }
 
-  async function handleRegister(e: React.FormEvent, event: (typeof events)[0]) {
+  async function handleRegister(e: React.FormEvent, event: BuefEvent) {
     e.preventDefault();
     setLoadingId(event.id);
     const f = getForm(event.id);
@@ -90,7 +45,7 @@ export default function EventsPage() {
     data.append("state", f.state);
     data.append("lga", f.lga);
     data.append("event", event.title);
-    data.append("eventDate", event.date);
+    data.append("eventDate", event.date_label);
     data.append("dietaryRequirements", f.dietary);
     try {
       const res = await fetch("/api/programme-apply", { method: "POST", body: data });
@@ -120,6 +75,13 @@ export default function EventsPage() {
             <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">Coming Up</p>
             <h2 className="text-3xl font-bold text-dark section-heading-center">Upcoming Events</h2>
           </div>
+          {loading ? (
+            <div className="flex justify-center py-20 text-mid gap-2">
+              <Loader2 size={20} className="animate-spin" /> Loading events…
+            </div>
+          ) : events.length === 0 ? (
+            <p className="text-center text-mid py-20">No upcoming events right now. Check back soon!</p>
+          ) : null}
           <div className="space-y-8">
             {events.map((event) => (
               <div key={event.id} className="bg-white rounded-2xl shadow-sm border border-light overflow-hidden">
@@ -135,8 +97,8 @@ export default function EventsPage() {
                   </div>
                   <h2 className="text-xl font-bold text-dark mb-2">{event.title}</h2>
                   <div className="flex flex-wrap gap-4 text-sm text-mid mb-4">
-                    <div className="flex items-center gap-1.5"><Calendar size={14} className="text-primary" />{event.date}</div>
-                    <div className="flex items-center gap-1.5"><Clock size={14} className="text-primary" />{event.time}</div>
+                    <div className="flex items-center gap-1.5"><Calendar size={14} className="text-primary" />{event.date_label}</div>
+                    <div className="flex items-center gap-1.5"><Clock size={14} className="text-primary" />{event.time_label}</div>
                     <div className="flex items-center gap-1.5"><MapPin size={14} className="text-primary" />{event.location}</div>
                   </div>
                   <p className="text-mid leading-relaxed mb-4">{event.description}</p>

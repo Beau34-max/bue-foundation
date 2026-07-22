@@ -1,81 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp, Upload, FileText } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp, Upload, FileText, Loader2 } from "lucide-react";
 import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
+import type { Job } from "@/lib/types";
 
-const jobs = [
-  {
-    id: "admin-manager",
-    title: "Administrative Manager",
-    type: "Full-time",
-    location: "Remote / Hybrid",
-    salary: "₦30,000 per month",
-    department: "Operations",
-    summary:
-      "We are seeking a highly organised and proactive Administrative Manager to oversee the day-to-day operations of the BUE Foundation. This is a pivotal role that ensures our programmes run smoothly and our team has the support they need to serve communities effectively.",
-    responsibilities: [
-      "Manage daily administrative operations of the foundation",
-      "Coordinate schedules, meetings, and correspondence for the CEO and senior leadership",
-      "Maintain accurate records, databases, and filing systems for beneficiaries and donors",
-      "Oversee procurement of office supplies and manage vendor relationships",
-      "Support programme teams with logistical planning and event coordination",
-      "Prepare reports, presentations, and documentation for board and stakeholder meetings",
-      "Manage volunteer and staff onboarding processes",
-      "Ensure compliance with NGO regulations and internal policies",
-    ],
-    requirements: [
-      "Minimum of 3 years' administrative or office management experience",
-      "Excellent written and verbal communication skills",
-      "Strong proficiency in Microsoft Office Suite (Word, Excel, Outlook, PowerPoint)",
-      "Experience in an NGO, charity, or public sector organisation preferred",
-      "Ability to prioritise and manage multiple tasks in a fast-paced environment",
-      "High level of integrity, discretion, and attention to detail",
-      "OND, HND, or BSc in Business Administration, Management, or related field",
-    ],
-    desirable: [
-      "Experience with project management tools",
-      "Knowledge of Nigerian NGO regulatory requirements",
-      "Fluency in Igbo and English",
-    ],
-  },
-  {
-    id: "fundraiser",
-    title: "Fundraising & Marketing Manager",
-    type: "Full-time",
-    location: "Remote / Hybrid",
-    salary: "₦50,000 per month",
-    department: "Fundraising & Development",
-    summary:
-      "The BUE Foundation is looking for a passionate and strategic Fundraising Manager to lead our income generation and donor engagement efforts. You will develop and implement fundraising campaigns, build lasting relationships with donors, and help ensure the sustainability of our programmes.",
-    responsibilities: [
-      "Develop and execute comprehensive fundraising strategies across individual giving, corporate partnerships, events, and grants",
-      "Identify, cultivate, and steward relationships with individual donors, corporate sponsors, and grant-making organisations",
-      "Plan and manage fundraising events, campaigns, and digital appeals",
-      "Write compelling grant proposals, reports, and donor communication materials",
-      "Track fundraising income and manage the donor database",
-      "Represent the foundation at networking events and stakeholder engagements",
-      "Collaborate with the communications team to align fundraising with brand messaging",
-      "Provide regular fundraising performance reports to senior leadership",
-    ],
-    requirements: [
-      "Minimum of 2 years' experience in fundraising, business development, or donor relations",
-      "Proven track record of meeting or exceeding fundraising targets",
-      "Exceptional written and verbal communication and persuasion skills",
-      "Experience writing grant applications or donor proposals",
-      "Strong networking ability and relationship management skills",
-      "Self-motivated with the ability to work independently and manage own workload",
-      "BSc in Communications, Business, Development Studies, or related field",
-    ],
-    desirable: [
-      "Experience in the Nigerian or African NGO sector",
-      "Familiarity with Paystack, GoFundMe, or other digital fundraising platforms",
-      "Existing network of corporate donors or philanthropic contacts",
-    ],
-  },
-];
-
-function JobCard({ job }: { job: (typeof jobs)[0] }) {
+function JobCard({ job }: { job: Job }) {
   const [expanded, setExpanded] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -483,6 +413,16 @@ function JobCard({ job }: { job: (typeof jobs)[0] }) {
 }
 
 export default function CareersPage() {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/jobs")
+      .then(r => r.json())
+      .then(data => setJobs(Array.isArray(data) ? data : []))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       {/* Header */}
@@ -530,16 +470,25 @@ export default function CareersPage() {
             <h2 className="text-3xl font-bold text-dark section-heading-center">
               Current Vacancies
             </h2>
-            <p className="text-mid mt-5 max-w-xl mx-auto">
-              We currently have <strong>2 open positions</strong>. Click a role to view the full
-              description and apply — upload your CV directly from the form.
-            </p>
+            {!loading && (
+              <p className="text-mid mt-5 max-w-xl mx-auto">
+                {jobs.length > 0
+                  ? <>We currently have <strong>{jobs.length} open {jobs.length === 1 ? "position" : "positions"}</strong>. Click a role to view the full description and apply — upload your CV directly from the form.</>
+                  : "We don't have any open vacancies right now. Send us a general application below and we'll keep your details on file."}
+              </p>
+            )}
           </div>
-          <div className="space-y-6">
-            {jobs.map((job) => (
-              <JobCard key={job.id} job={job} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-16 text-mid gap-2">
+              <Loader2 size={20} className="animate-spin" /> Loading vacancies…
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {jobs.map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

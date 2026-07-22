@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Bitter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import ConditionalShell from "@/components/ConditionalShell";
 
 const bitter = Bitter({
   subsets: ["latin"],
@@ -38,9 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={bitter.variable}>
       <body className="min-h-screen flex flex-col bg-page text-dark">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ConditionalShell>{children}</ConditionalShell>
       </body>
     </html>
   );
