@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp, Upload, FileText, Loader2 } from "lucide-react";
+import { MapPin, Clock, CheckCircle, ChevronDown, ChevronUp, Upload, FileText, Loader2, LockKeyhole } from "lucide-react";
 import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 import type { Job } from "@/lib/types";
 
@@ -77,15 +77,34 @@ function JobCard({ job }: { job: Job }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-light overflow-hidden">
+    <div className={`bg-white rounded-2xl shadow-sm border overflow-hidden ${job.is_active ? "border-light" : "border-light opacity-80"}`}>
+      {/* Closed banner */}
+      {!job.is_active && (
+        <div className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 border-b border-light text-sm text-mid font-medium">
+          <LockKeyhole size={14} className="text-gray-400" />
+          This position is now closed — we are no longer accepting applications
+        </div>
+      )}
+
       {/* Job header */}
       <div className="p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
           <div>
-            <span className="inline-block text-xs font-semibold bg-accent text-dark px-3 py-1 rounded-full mb-3">
-              {job.department}
-            </span>
-            <h2 className="text-2xl font-bold text-dark">{job.title}</h2>
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${job.is_active ? "bg-accent text-dark" : "bg-gray-200 text-mid"}`}>
+                {job.department}
+              </span>
+              {job.is_active ? (
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" /> Now Hiring
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-200 px-2.5 py-1 rounded-full">
+                  <LockKeyhole size={10} /> Position Closed
+                </span>
+              )}
+            </div>
+            <h2 className={`text-2xl font-bold ${job.is_active ? "text-dark" : "text-mid"}`}>{job.title}</h2>
           </div>
           <div className="flex flex-col gap-1.5 text-sm text-mid sm:text-right">
             <div className="flex items-center gap-1.5 sm:justify-end">
@@ -112,21 +131,27 @@ function JobCard({ job }: { job: Job }) {
               <>View full job description <ChevronDown size={16} /></>
             )}
           </button>
-          <button
-            onClick={() => {
-              setShowForm(true);
-              setTimeout(
-                () =>
-                  document
-                    .getElementById(`form-${job.id}`)
-                    ?.scrollIntoView({ behavior: "smooth" }),
-                100
-              );
-            }}
-            className="px-5 py-2 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary-dark transition-colors"
-          >
-            Apply Now
-          </button>
+          {job.is_active ? (
+            <button
+              onClick={() => {
+                setShowForm(true);
+                setTimeout(
+                  () =>
+                    document
+                      .getElementById(`form-${job.id}`)
+                      ?.scrollIntoView({ behavior: "smooth" }),
+                  100
+                );
+              }}
+              className="px-5 py-2 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary-dark transition-colors"
+            >
+              Apply Now
+            </button>
+          ) : (
+            <span className="flex items-center gap-1.5 px-5 py-2 bg-gray-100 text-gray-400 text-sm font-semibold rounded-md cursor-not-allowed select-none">
+              <LockKeyhole size={13} /> Applications Closed
+            </span>
+          )}
         </div>
       </div>
 
@@ -170,7 +195,7 @@ function JobCard({ job }: { job: Job }) {
       )}
 
       {/* Application Form */}
-      {showForm && (
+      {showForm && job.is_active && (
         <div id={`form-${job.id}`} className="border-t border-light px-6 sm:px-8 py-8 bg-page">
           <h3 className="text-xl font-bold text-dark mb-6">Apply for: {job.title}</h3>
 
@@ -423,6 +448,9 @@ export default function CareersPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const openJobs = jobs.filter(j => j.is_active);
+  const closedJobs = jobs.filter(j => !j.is_active);
+
   return (
     <>
       {/* Header */}
@@ -465,16 +493,18 @@ export default function CareersPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
-              Open Positions
+              Our Positions
             </p>
             <h2 className="text-3xl font-bold text-dark section-heading-center">
-              Current Vacancies
+              Roles at BUE Foundation
             </h2>
             {!loading && (
               <p className="text-mid mt-5 max-w-xl mx-auto">
-                {jobs.length > 0
-                  ? <>We currently have <strong>{jobs.length} open {jobs.length === 1 ? "position" : "positions"}</strong>. Click a role to view the full description and apply — upload your CV directly from the form.</>
-                  : "We don't have any open vacancies right now. Send us a general application below and we'll keep your details on file."}
+                {openJobs.length > 0
+                  ? <>We currently have <strong>{openJobs.length} open {openJobs.length === 1 ? "position" : "positions"}</strong>. Click a role to view the full description and apply.{closedJobs.length > 0 && <> Closed roles are shown below for reference.</>}</>
+                  : jobs.length > 0
+                  ? <>We don&apos;t have any open roles right now — check back soon. You can see the kinds of roles we hire for below.</>
+                  : <>We don&apos;t have any open vacancies right now. Send us a general application below and we&apos;ll keep your details on file.</>}
               </p>
             )}
           </div>
