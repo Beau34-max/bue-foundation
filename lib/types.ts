@@ -13,6 +13,18 @@ export type Job = {
   created_at: string;
 };
 
+export type VolunteerRole = {
+  id: string;
+  title: string;
+  category: string;
+  commitment: string;
+  location: string;
+  description: string;
+  skills: string[];
+  is_active: boolean;
+  created_at: string;
+};
+
 export type BuefEvent = {
   id: string;
   title: string;
