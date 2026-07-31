@@ -7,9 +7,15 @@ import type { VolunteerRole } from "@/lib/types";
 const toLines = (arr: string[]) => arr.join("\n");
 const toArr = (s: string) => s.split("\n").map(t => t.trim()).filter(Boolean);
 
-const EMPTY: Omit<VolunteerRole, "id" | "created_at"> = {
+// Form state uses skills as a newline-separated string; converted to string[] on save
+type RoleForm = {
+  title: string; category: string; commitment: string;
+  location: string; description: string; skills: string;
+};
+
+const EMPTY_FORM: RoleForm = {
   title: "", category: "", commitment: "", location: "Remote / Hybrid",
-  description: "", skills: [], is_active: true,
+  description: "", skills: "",
 };
 
 const CATEGORIES = ["Field", "Education", "Admin", "Finance", "Digital", "Fundraising", "Training", "Health", "Legal", "Other"];
@@ -52,10 +58,10 @@ export default function VolunteerRolesTab({ isSuperAdmin }: { isSuperAdmin: bool
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [addForm, setAddForm] = useState({ ...EMPTY, skills: "" as unknown as string });
+  const [addForm, setAddForm] = useState<RoleForm>(EMPTY_FORM);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
-  const [editForms, setEditForms] = useState<Record<string, { title: string; category: string; commitment: string; location: string; description: string; skills: string }>>({});
+  const [editForms, setEditForms] = useState<Record<string, RoleForm>>({});
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const fetchRoles = useCallback(async () => {
@@ -90,13 +96,13 @@ export default function VolunteerRolesTab({ isSuperAdmin }: { isSuperAdmin: bool
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...addForm,
-          skills: toArr(addForm.skills as unknown as string),
+          skills: toArr(addForm.skills),
         }),
       });
       if (res.ok) {
         const created = await res.json();
         setRoles(prev => [created, ...prev]);
-        setAddForm({ ...EMPTY, skills: "" as unknown as string });
+        setAddForm(EMPTY_FORM);
         setShowAdd(false);
       }
     } finally {
@@ -114,7 +120,7 @@ export default function VolunteerRolesTab({ isSuperAdmin }: { isSuperAdmin: bool
         commitment: role.commitment,
         location: role.location,
         description: role.description,
-        skills: toLines(role.skills),
+        skills: toLines(role.skills ?? []),
       },
     }));
   }
@@ -206,7 +212,7 @@ export default function VolunteerRolesTab({ isSuperAdmin }: { isSuperAdmin: bool
           </div>
           <div>
             <label className="block text-xs font-semibold text-dark mb-1">Skills Needed <span className="text-mid font-normal">(one per line)</span></label>
-            <textarea rows={3} value={addForm.skills as unknown as string} onChange={e => setAddForm(p => ({ ...p, skills: e.target.value as unknown as string[] }))}
+            <textarea rows={3} value={addForm.skills} onChange={e => setAddForm(p => ({ ...p, skills: e.target.value }))}
               className={inputCls} placeholder={"Accounting / bookkeeping\nMicrosoft Excel\nAttention to detail"} />
           </div>
           <div className="flex gap-3">
