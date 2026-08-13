@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, Clock, Users, Award } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle, Clock, Users, Award, ArrowRight } from "lucide-react";
 import { NIGERIA_STATES, NIGERIA_STATES_LGAS } from "@/lib/nigeria-lgas";
 
 const courses = [
@@ -158,6 +159,44 @@ export default function TrainingPage() {
                 <div className="text-mid text-sm">{label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured: Digital Skills-Up Programme */}
+      <section className="py-12 bg-page border-b border-light">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="rounded-2xl overflow-hidden border-2 border-primary shadow-md"
+            style={{ background: "linear-gradient(135deg, #4B1F6F 0%, #2d1242 100%)" }}>
+            <div className="p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-6">
+              <div className="flex-1 text-white">
+                <span className="inline-block text-xs font-bold bg-accent text-dark px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
+                  Now Open · Starts 7 September 2026
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">
+                  Six-Week Digital Skills-Up Programme
+                </h2>
+                <p className="text-white/75 text-sm mb-4">
+                  Free online training in Power BI, Adobe, Canva, PowerPoint, and CV Writing.
+                  Monday, Thursday & Saturday · 4–6 PM · Fully online.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["Power BI", "Adobe", "Canva", "PowerPoint", "CV Writing"].map(s => (
+                    <span key={s} className="text-xs bg-white/15 text-white px-2.5 py-1 rounded-full">{s}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-3 sm:items-end shrink-0">
+                <Link href="/programmes/training/digital-skills-up"
+                  className="flex items-center gap-2 px-6 py-3 bg-accent text-dark font-bold rounded-md hover:opacity-90 transition-opacity text-sm whitespace-nowrap">
+                  View Programme <ArrowRight size={15} />
+                </Link>
+                <Link href="/programmes/training/digital-skills-up/register"
+                  className="flex items-center gap-2 px-6 py-3 bg-white/15 text-white font-semibold rounded-md hover:bg-white/25 transition-colors text-sm whitespace-nowrap">
+                  Register Now <ArrowRight size={15} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
