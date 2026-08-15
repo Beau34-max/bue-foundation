@@ -20,9 +20,31 @@ export async function POST(request: NextRequest) {
     const heardAbout = formData.get("heardAbout") as string;
     const cvFile = formData.get("cv") as File | null;
 
+    // Duplicate check — block re-application for the same position
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { data: existing } = await supabase
+          .from("submissions")
+          .select("id")
+          .eq("type", "career_application")
+          .eq("email", email)
+          .filter("data->>position", "eq", position)
+          .limit(1)
+          .maybeSingle();
+        if (existing) {
+          return NextResponse.json({
+            success: false,
+            error: "You have already applied for this position. We will review your application and be in touch with you soon.",
+          }, { status: 409 });
+        }
+      } catch {
+        // Check failed — proceed with application
+      }
+    }
+
     // Save to Supabase — non-fatal
     try {
-      const supabase = getSupabase();
       if (supabase) {
         await supabase.from("submissions").insert({
           type: "career_application",

@@ -64,8 +64,8 @@ export default function RegisterForm() {
     try {
       const data = new FormData();
       const programmeName = form.module
-        ? `Digital Skills-Up Programme – ${form.module}`
-        : "Digital Skills-Up Programme (General)";
+        ? `Training – Digital Skills-Up Programme – ${form.module}`
+        : "Training – Digital Skills-Up Programme (General)";
       data.append("programme", programmeName);
       data.append("name", form.name);
       data.append("email", form.email);

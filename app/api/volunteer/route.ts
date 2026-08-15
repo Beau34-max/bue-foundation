@@ -11,9 +11,31 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { name, email, phone, address, state, lga, role, availability, message } = body;
 
+    // Duplicate check — block re-application for the same volunteer role
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { data: existing } = await supabase
+          .from("submissions")
+          .select("id")
+          .eq("type", "volunteer_application")
+          .eq("email", email)
+          .filter("data->>role", "eq", role)
+          .limit(1)
+          .maybeSingle();
+        if (existing) {
+          return NextResponse.json({
+            success: false,
+            error: "You have already applied for this volunteer role. Our team will be in touch with you soon.",
+          }, { status: 409 });
+        }
+      } catch {
+        // Check failed — proceed with application
+      }
+    }
+
     // Save to Supabase — non-fatal
     try {
-      const supabase = getSupabase();
       if (supabase) {
         await supabase.from("submissions").insert({
           type: "volunteer_application",

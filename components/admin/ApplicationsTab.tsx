@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   ChevronDown, ChevronUp, RefreshCw, Mail, Phone, Download,
   Trash2, Briefcase, GraduationCap, Calendar, Cpu, MessageSquare,
-  Users, Banknote, Heart, Package, AlertTriangle,
+  Users, Banknote, Heart, Package, AlertTriangle, Plus, X,
 } from "lucide-react";
 
 type Submission = {
@@ -30,6 +30,64 @@ const TABS = [
   { key: "beneficiary_supported",   label: "Beneficiary Records", icon: Heart          },
   { key: "asset",                   label: "Asset Records",       icon: Package        },
 ] as const;
+
+type FieldDef = {
+  key: string;
+  label: string;
+  required?: boolean;
+  type?: "text" | "email" | "tel" | "textarea" | "select";
+  options?: string[];
+};
+
+const SOURCE_OPTS = ["Email received", "Phone call", "Walk-in", "Referral", "Social media", "Other"];
+
+const EXTRA_FIELDS: Record<string, FieldDef[]> = {
+  career_application: [
+    { key: "position",     label: "Position Applied For", required: true },
+    { key: "experience",   label: "Years of Experience",  type: "select",
+      options: ["0–1 years", "1–2 years", "2–5 years", "5–10 years", "10+ years"] },
+    { key: "linkedin",     label: "LinkedIn Profile" },
+    { key: "cover_letter", label: "Cover Letter / Notes", type: "textarea" },
+    { key: "heard_about",  label: "How They Heard About Us" },
+    { key: "cv_filename",  label: "CV Filename (if known)" },
+    { key: "entry_source", label: "Entry Source", type: "select", options: SOURCE_OPTS },
+  ],
+  scholarship_application: [
+    { key: "programme",    label: "Programme Applying For" },
+    { key: "institution",  label: "Current School / Institution" },
+    { key: "entry_source", label: "Entry Source", type: "select", options: SOURCE_OPTS },
+    { key: "notes",        label: "Notes", type: "textarea" },
+  ],
+  volunteer_application: [
+    { key: "role_applied", label: "Role Applied For" },
+    { key: "skills",       label: "Skills / Experience", type: "textarea" },
+    { key: "motivation",   label: "Motivation", type: "textarea" },
+    { key: "entry_source", label: "Entry Source", type: "select", options: SOURCE_OPTS },
+  ],
+  event_registration: [
+    { key: "event_name",   label: "Event Name", required: true },
+    { key: "entry_source", label: "Entry Source", type: "select", options: SOURCE_OPTS },
+    { key: "notes",        label: "Notes", type: "textarea" },
+  ],
+  training_registration: [
+    { key: "course",       label: "Course / Module", required: true },
+    { key: "entry_source", label: "Entry Source", type: "select", options: SOURCE_OPTS },
+    { key: "notes",        label: "Notes", type: "textarea" },
+  ],
+  enterprise_application: [
+    { key: "business_name", label: "Business Name" },
+    { key: "business_type", label: "Business Type / Sector" },
+    { key: "entry_source",  label: "Entry Source", type: "select", options: SOURCE_OPTS },
+    { key: "notes",         label: "Notes", type: "textarea" },
+  ],
+};
+
+function getExtraFields(type: string): FieldDef[] {
+  return EXTRA_FIELDS[type] ?? [
+    { key: "notes",        label: "Notes / Details",  type: "textarea" },
+    { key: "entry_source", label: "Entry Source", type: "select", options: SOURCE_OPTS },
+  ];
+}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -103,10 +161,140 @@ function DeleteModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel:
   );
 }
 
-// ── Submission row ────────────────────────────────────────────────────────
+// ── Add record modal ───────────────────────────────────────────────────────
+
+function AddModal({
+  activeType,
+  onClose,
+  onAdded,
+}: {
+  activeType: string;
+  onClose: () => void;
+  onAdded: (sub: Submission) => void;
+}) {
+  const extraFields = getExtraFields(activeType);
+  const [form, setForm] = useState<Record<string, string>>(() => {
+    const base: Record<string, string> = { name: "", email: "", phone: "" };
+    extraFields.forEach(f => { base[f.key] = ""; });
+    return base;
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      const { name, email, phone, ...rest } = form;
+      const data: Record<string, string> = {};
+      Object.entries(rest).forEach(([k, v]) => { if (v.trim()) data[k] = v.trim(); });
+
+      const res = await fetch("/api/admin/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: activeType,
+          name: name.trim(),
+          email: email.trim() || null,
+          phone: phone.trim() || null,
+          data,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || "Failed to save"); return; }
+      onAdded(json);
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const tabLabel = TABS.find(t => t.key === activeType)?.label ?? activeType;
+  const inputCls = "w-full px-3 py-2 border border-light rounded-lg text-dark text-sm focus:outline-none focus:border-primary transition-colors";
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-start justify-center z-50 px-4 py-8 overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-xl my-auto">
+        <div className="px-6 pt-6 pb-4 border-b border-light flex items-center justify-between">
+          <h3 className="font-bold text-dark text-lg">Add {tabLabel} Manually</h3>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-page transition-colors text-mid">
+            <X size={18} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-dark mb-1.5">Full Name *</label>
+              <input type="text" name="name" value={form.name} onChange={handleChange} required
+                className={inputCls} placeholder="Full name" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-dark mb-1.5">Email</label>
+              <input type="email" name="email" value={form.email} onChange={handleChange}
+                className={inputCls} placeholder="email@example.com" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-dark mb-1.5">Phone Number</label>
+            <input type="tel" name="phone" value={form.phone} onChange={handleChange}
+              className={inputCls} placeholder="+234 …" />
+          </div>
+
+          {extraFields.map(f => (
+            <div key={f.key}>
+              <label className="block text-sm font-semibold text-dark mb-1.5">
+                {f.label}{f.required && " *"}
+              </label>
+              {f.type === "textarea" ? (
+                <textarea name={f.key} value={form[f.key] ?? ""} onChange={handleChange}
+                  rows={3} required={f.required}
+                  className={inputCls + " resize-none"} />
+              ) : f.type === "select" ? (
+                <select name={f.key} value={form[f.key] ?? ""} onChange={handleChange}
+                  required={f.required} className={inputCls + " bg-white"}>
+                  <option value="">Select…</option>
+                  {f.options?.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              ) : (
+                <input type={f.type ?? "text"} name={f.key} value={form[f.key] ?? ""}
+                  onChange={handleChange} required={f.required} className={inputCls} />
+              )}
+            </div>
+          ))}
+
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</p>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button type="submit" disabled={saving}
+              className="flex-1 py-2.5 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-opacity text-sm disabled:opacity-50">
+              {saving ? "Saving…" : "Add Record"}
+            </button>
+            <button type="button" onClick={onClose}
+              className="px-4 py-2.5 border border-light text-mid font-semibold rounded-lg hover:bg-page transition-colors text-sm">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Submission row ─────────────────────────────────────────────────────────
 
 function DataRow({ label, value }: { label: string; value: unknown }) {
-  if (value === null || value === undefined || value === "") return null;
+  if (value === null || value === undefined || value === "" || value === false) return null;
   const display = Array.isArray(value) ? value.join(", ") : String(value);
   return (
     <div className="grid grid-cols-[180px_1fr] gap-x-4 py-1.5 border-b border-light last:border-0">
@@ -156,6 +344,8 @@ function SubmissionRow({
     (sub.data?.beneficiary_name as string) ||
     "";
 
+  const isManual = sub.data?.manually_added === true;
+
   return (
     <>
       {confirming && (
@@ -166,13 +356,17 @@ function SubmissionRow({
       )}
       <div className="border border-light rounded-xl overflow-hidden">
         <div className="flex items-center gap-3 px-5 py-4 bg-white hover:bg-page transition-colors">
-          {/* Expand toggle */}
           <button onClick={() => setOpen(o => !o)} className="flex-1 flex items-center gap-4 text-left min-w-0">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="font-semibold text-dark truncate">{title}</span>
                 {subtitle && subtitle !== title && (
                   <span className="text-sm text-primary font-medium truncate">{subtitle}</span>
+                )}
+                {isManual && (
+                  <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+                    Manual entry
+                  </span>
                 )}
               </div>
               <div className="flex items-center gap-4 mt-1 text-sm text-mid flex-wrap">
@@ -194,7 +388,6 @@ function SubmissionRow({
               : <ChevronDown size={16} className="text-mid shrink-0" />}
           </button>
 
-          {/* Delete button — super_admin only */}
           {isSuperAdmin && (
             <button
               onClick={() => setConfirming(true)}
@@ -212,9 +405,11 @@ function SubmissionRow({
             {sub.name && <DataRow label="Name" value={sub.name} />}
             {sub.email && <DataRow label="Email" value={sub.email} />}
             {sub.phone && <DataRow label="Phone" value={sub.phone} />}
-            {Object.entries(sub.data || {}).map(([k, v]) => (
-              <DataRow key={k} label={k} value={v} />
-            ))}
+            {Object.entries(sub.data || {})
+              .filter(([k]) => k !== "manually_added")
+              .map(([k, v]) => (
+                <DataRow key={k} label={k} value={v} />
+              ))}
             <p className="text-xs text-mid pt-2">Submitted: {formatDate(sub.created_at)}</p>
           </div>
         )}
@@ -230,6 +425,7 @@ export default function ApplicationsTab({ isSuperAdmin }: { isSuperAdmin: boolea
   const [subs, setSubs] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(false);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const load = useCallback(async (type: string) => {
     setLoading(true);
@@ -260,16 +456,36 @@ export default function ApplicationsTab({ isSuperAdmin }: { isSuperAdmin: boolea
     setCounts(prev => ({ ...prev, [activeType]: Math.max(0, (prev[activeType] ?? 1) - 1) }));
   }
 
+  function handleAdded(sub: Submission) {
+    setSubs(prev => [sub, ...prev]);
+    setCounts(prev => ({ ...prev, [activeType]: (prev[activeType] ?? 0) + 1 }));
+    setShowAddModal(false);
+  }
+
   const filtered = subs.filter(s => s.type === activeType);
 
   return (
     <div className="space-y-4">
+      {showAddModal && (
+        <AddModal
+          activeType={activeType}
+          onClose={() => setShowAddModal(false)}
+          onAdded={handleAdded}
+        />
+      )}
+
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-xl font-bold text-dark">Applications & Records</h2>
           <p className="text-mid text-sm mt-0.5">All submissions from public forms and internal data entry.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+          >
+            <Plus size={14} /> Add Manually
+          </button>
           {filtered.length > 0 && (
             <button
               onClick={() => exportCSV(activeType, filtered)}
@@ -322,7 +538,7 @@ export default function ApplicationsTab({ isSuperAdmin }: { isSuperAdmin: boolea
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-mid text-sm">
             <p className="font-medium text-dark mb-1">No records yet</p>
-            <p>Submissions will appear here once people fill in the public forms or you log entries.</p>
+            <p>Submissions will appear here once people fill in the public forms, or use Add Manually above.</p>
           </div>
         ) : (
           <>

@@ -30,9 +30,31 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // Duplicate check — block re-registration for the same programme
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { data: existing } = await supabase
+          .from("submissions")
+          .select("id")
+          .eq("type", getSubmissionType(programme))
+          .eq("email", email)
+          .filter("data->>programme", "eq", programme)
+          .limit(1)
+          .maybeSingle();
+        if (existing) {
+          return NextResponse.json({
+            success: false,
+            error: "You have already registered for this programme. We will send you joining details closer to the start date.",
+          }, { status: 409 });
+        }
+      } catch {
+        // Check failed — proceed with registration
+      }
+    }
+
     // Save to Supabase — non-fatal
     try {
-      const supabase = getSupabase();
       if (supabase) {
         await supabase.from("submissions").insert({
           type: getSubmissionType(programme),

@@ -10,6 +10,7 @@ import type { Job, BuefEvent } from "@/lib/types";
 import DataEntryTab from "@/components/admin/DataEntryTab";
 import ApplicationsTab from "@/components/admin/ApplicationsTab";
 import VolunteerRolesTab from "@/components/admin/VolunteerRolesTab";
+import TrainingTab from "@/components/admin/TrainingTab";
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -150,7 +151,7 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
 export default function AdminPage() {
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
-  const [tab, setTab] = useState<"jobs" | "events" | "volunteers" | "data" | "applications" | "users">("jobs");
+  const [tab, setTab] = useState<"jobs" | "events" | "volunteers" | "training" | "data" | "applications" | "users">("jobs");
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [events, setEvents] = useState<BuefEvent[]>([]);
@@ -319,6 +320,7 @@ export default function AdminPage() {
     { id: "jobs" as const, label: `Jobs (${jobs.length})` },
     { id: "events" as const, label: `Events (${events.length})` },
     { id: "volunteers" as const, label: "Volunteer Roles" },
+    { id: "training" as const, label: "Training" },
     { id: "data" as const, label: "Data Entry" },
     { id: "applications" as const, label: "Applications" },
     ...(isSuperAdmin ? [{ id: "users" as const, label: "Users" }] : []),
@@ -518,6 +520,7 @@ export default function AdminPage() {
 
             {/* ── DATA ENTRY ────────────────────────────────────────────── */}
             {tab === "volunteers" && <VolunteerRolesTab isSuperAdmin={isSuperAdmin} />}
+            {tab === "training" && <TrainingTab isSuperAdmin={isSuperAdmin} />}
             {tab === "data" && <DataEntryTab />}
             {tab === "applications" && <ApplicationsTab isSuperAdmin={isSuperAdmin} />}
 
