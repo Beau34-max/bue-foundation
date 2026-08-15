@@ -17,6 +17,20 @@ import TrainingTab from "@/components/admin/TrainingTab";
 const toLines = (arr: string[]) => arr.join("\n");
 const toArr = (s: string) => s.split("\n").map(t => t.trim()).filter(Boolean);
 
+// Date helpers — admin forms use ISO (YYYY-MM-DD), DB stores readable text
+function textToISO(text: string): string {
+  if (!text?.trim()) return "";
+  const cleaned = text.replace(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s*/i, "").trim();
+  const d = new Date(cleaned);
+  if (isNaN(d.getTime())) return "";
+  return d.toISOString().split("T")[0];
+}
+function isoToEventDate(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+
 const EMPTY_JOB = {
   title: "", type: "Full-time", location: "Remote / Hybrid",
   salary: "", department: "", summary: "",
@@ -253,7 +267,7 @@ export default function AdminPage() {
   function openEditEvent(ev: BuefEvent) {
     setEditingId(ev.id);
     setEventForm({
-      title: ev.title, type: ev.type, date_label: ev.date_label,
+      title: ev.title, type: ev.type, date_label: textToISO(ev.date_label),
       time_label: ev.time_label, location: ev.location, description: ev.description,
       speakers: toLines(ev.speakers), price: ev.price, seats: ev.seats,
       tags: ev.tags.join(", "), sort_order: ev.sort_order,
@@ -265,6 +279,7 @@ export default function AdminPage() {
     e.preventDefault(); setSaving(true); setFormError("");
     const payload = {
       ...eventForm,
+      date_label: isoToEventDate(eventForm.date_label),
       speakers: toArr(eventForm.speakers),
       tags: eventForm.tags.split(",").map(t => t.trim()).filter(Boolean),
       sort_order: Number(eventForm.sort_order),
@@ -489,7 +504,10 @@ export default function AdminPage() {
                         {field("Type", inp(eventForm.type, v => setEventForm(p => ({ ...p, type: v })), "e.g. Workshop, Gala, Outreach"))}
                       </div>
                       <div className="grid sm:grid-cols-2 gap-5">
-                        {field("Date", inp(eventForm.date_label, v => setEventForm(p => ({ ...p, date_label: v })), "Saturday, 1 August 2026"), true)}
+                        {field("Date", (
+                          <input type="date" value={eventForm.date_label} onChange={e => setEventForm(p => ({ ...p, date_label: e.target.value }))} required
+                            className="w-full px-3 py-2.5 border border-light rounded-lg text-dark text-sm focus:outline-none focus:border-primary transition-colors bg-white" />
+                        ), true)}
                         {field("Time", inp(eventForm.time_label, v => setEventForm(p => ({ ...p, time_label: v })), "9:00 AM – 2:00 PM"))}
                       </div>
                       {field("Location", inp(eventForm.location, v => setEventForm(p => ({ ...p, location: v })), "BUE Foundation Hall, Afikpo-North"), true)}

@@ -35,6 +35,20 @@ function toLines(arr: string[]): string {
   return arr.join("\n");
 }
 
+// Date helpers
+function textToISO(text: string): string {
+  if (!text?.trim()) return "";
+  const cleaned = text.replace(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s*/i, "").trim();
+  const d = new Date(cleaned);
+  if (isNaN(d.getTime())) return "";
+  return d.toISOString().split("T")[0];
+}
+function isoToShortDate(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
@@ -88,7 +102,7 @@ export default function TrainingTab({ isSuperAdmin }: { isSuperAdmin: boolean })
     setForm({
       title: p.title, category: p.category, duration: p.duration,
       schedule: p.schedule, format: p.format, level: p.level, cost: p.cost,
-      next_start: p.next_start, description: p.description,
+      next_start: textToISO(p.next_start), description: p.description,
       outcomes: toLines(p.outcomes), sort_order: p.sort_order ?? 0,
     });
     setFormError("");
@@ -99,7 +113,7 @@ export default function TrainingTab({ isSuperAdmin }: { isSuperAdmin: boolean })
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true); setFormError("");
-    const payload = { ...form, outcomes: toArr(form.outcomes) };
+    const payload = { ...form, next_start: isoToShortDate(form.next_start), outcomes: toArr(form.outcomes) };
     try {
       const url = editingId ? `/api/admin/training/${editingId}` : "/api/admin/training";
       const method = editingId ? "PATCH" : "POST";
@@ -284,8 +298,8 @@ export default function TrainingTab({ isSuperAdmin }: { isSuperAdmin: boolean })
             </div>
             <div className="grid sm:grid-cols-2 gap-5">
               {field("Next Start Date", (
-                <input type="text" value={form.next_start} onChange={e => setForm(p => ({ ...p, next_start: e.target.value }))}
-                  required className={inputCls} placeholder="e.g. 3 August 2026" />
+                <input type="date" value={form.next_start} onChange={e => setForm(p => ({ ...p, next_start: e.target.value }))}
+                  required className={inputCls} />
               ), true)}
               {field("Sort Order", (
                 <input type="number" value={form.sort_order} onChange={e => setForm(p => ({ ...p, sort_order: Number(e.target.value) }))}
