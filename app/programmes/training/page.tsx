@@ -24,6 +24,7 @@ export default function TrainingPage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [openForm, setOpenForm] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; address: string; state: string; lga: string; motivation: string }>>({});
 
   useEffect(() => {
@@ -47,7 +48,9 @@ export default function TrainingPage() {
   }
 
   async function handleRegister(e: React.FormEvent, course: TrainingProgramme) {
-    e.preventDefault(); setLoadingId(course.id);
+    e.preventDefault();
+    setLoadingId(course.id);
+    setErrors(prev => ({ ...prev, [course.id]: "" }));
     const f = getForm(course.id);
     const data = new FormData();
     data.append("programme", `Training Registration – ${course.title}`);
@@ -61,9 +64,11 @@ export default function TrainingPage() {
       if (json.success) {
         setSubmitted(course.id);
       } else {
-        alert(json.error || "Something went wrong. Please try again.");
+        setErrors(prev => ({ ...prev, [course.id]: json.error || "Something went wrong. Please try again." }));
       }
-    } catch { /* silent */ }
+    } catch {
+      setErrors(prev => ({ ...prev, [course.id]: "Network error. Please check your connection and try again." }));
+    }
     finally { setLoadingId(null); }
   }
 
@@ -224,6 +229,11 @@ export default function TrainingPage() {
                           onChange={(e) => handleChange(course.id, e)} rows={2}
                           placeholder="Why do you want to join this course?"
                           className="w-full px-3 py-2 border border-light rounded-lg text-dark text-sm transition-all resize-none" />
+                        {errors[course.id] && (
+                          <p className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
+                            {errors[course.id]}
+                          </p>
+                        )}
                         <div className="flex gap-2">
                           <button type="submit" disabled={loadingId === course.id}
                             className="flex-1 py-2 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary-dark transition-colors disabled:opacity-50">

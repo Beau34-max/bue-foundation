@@ -10,6 +10,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [forms, setForms] = useState<Record<string, { name: string; email: string; phone: string; address: string; state: string; lga: string; dietary: string }>>({});
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function EventsPage() {
   async function handleRegister(e: React.FormEvent, event: BuefEvent) {
     e.preventDefault();
     setLoadingId(event.id);
+    setErrors(prev => ({ ...prev, [event.id]: "" }));
     const f = getForm(event.id);
     const data = new FormData();
     data.append("programme", `Event Registration – ${event.title}`);
@@ -50,8 +52,14 @@ export default function EventsPage() {
     try {
       const res = await fetch("/api/programme-apply", { method: "POST", body: data });
       const json = await res.json();
-      if (json.success) setSubmitted(event.id);
-    } catch { /* silent */ }
+      if (json.success) {
+        setSubmitted(event.id);
+      } else {
+        setErrors(prev => ({ ...prev, [event.id]: json.error || "Something went wrong. Please try again." }));
+      }
+    } catch {
+      setErrors(prev => ({ ...prev, [event.id]: "Network error. Please check your connection and try again." }));
+    }
     finally { setLoadingId(null); }
   }
 
@@ -165,6 +173,11 @@ export default function EventsPage() {
                           </select>
                         </div>
                       </div>
+                      {errors[event.id] && (
+                        <p className="mb-3 text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-lg">
+                          {errors[event.id]}
+                        </p>
+                      )}
                       <button type="submit" disabled={loadingId === event.id}
                         className="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary-dark transition-colors disabled:opacity-50">
                         {loadingId === event.id ? "Registering…" : "Register Now"}
