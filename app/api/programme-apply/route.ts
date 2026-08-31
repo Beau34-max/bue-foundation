@@ -100,19 +100,66 @@ export async function POST(request: NextRequest) {
       const isEvent = programme.toLowerCase().startsWith("event");
       const isTraining = programme.toLowerCase().startsWith("training");
       const isScholarship = programme.toLowerCase().startsWith("scholarship");
-      const nextStep = isEvent
-        ? "We will send you a reminder closer to the event date with all the details you need."
-        : isTraining
-        ? "Our training coordinator will be in touch within <strong>5 working days</strong> to confirm your enrolment and share joining details."
-        : isScholarship
-        ? "Our scholarships team will review your application and contact you within <strong>4 weeks</strong>."
-        : "Our team will review your application and be in touch within <strong>4 weeks</strong>.";
+      const isDigitalSkillsUp = programme.toLowerCase().includes("digital skills");
 
-      await resend.emails.send({
-        from: MAIL_FROM,
-        to: [email],
-        subject: `Application Received – ${programme} | BUE Foundation`,
-        html: `
+      let confirmationHtml: string;
+
+      if (isDigitalSkillsUp) {
+        confirmationHtml = `
+          <div style="font-family:Arial,sans-serif;max-width:600px;color:#212121;">
+            <div style="background:#4B1F6F;padding:20px 24px;border-radius:8px 8px 0 0;">
+              <h2 style="color:white;margin:0;">Registration Confirmed</h2>
+              <p style="color:rgba(255,255,255,0.75);margin:4px 0 0;">BUE Foundation Digital Skills-Up Programme 2026</p>
+            </div>
+            <div style="background:#f7f7f7;padding:24px;border-radius:0 0 8px 8px;border:1px solid #e8e8e8;border-top:none;">
+              <p>Dear <strong>${name}</strong>,</p>
+              <p>Thank you for registering for the <strong>BUE Foundation Digital Skills-Up Programme 2026</strong>.</p>
+              <p>Please find below the Microsoft Teams details for the live training sessions.</p>
+
+              <div style="background:#ffffff;border:1px solid #e0d7f0;border-left:4px solid #4B1F6F;border-radius:8px;padding:20px;margin:20px 0;">
+                <table style="width:100%;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding:8px 0;font-weight:bold;color:#4B1F6F;width:160px;">Training Days:</td>
+                    <td style="padding:8px 0;">Monday, Thursday and Saturday</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Time:</td>
+                    <td style="padding:8px 0;">4:00 PM – 6:00 PM</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Mode:</td>
+                    <td style="padding:8px 0;">Online via Microsoft Teams</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Joining Link:</td>
+                    <td style="padding:8px 0;"><a href="https://teams.microsoft.com/meet/324668366130321?p=6ozMU4pt79767S8MX9" style="color:#4B1F6F;word-break:break-all;">Click here to join</a></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Meeting ID:</td>
+                    <td style="padding:8px 0;">324 668 366 130 321</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;font-weight:bold;color:#4B1F6F;">Passcode:</td>
+                    <td style="padding:8px 0;font-family:monospace;font-size:15px;letter-spacing:1px;">cS26tD6z</td>
+                  </tr>
+                </table>
+              </div>
+
+              <p>Please keep these details safe and use the same link for all scheduled sessions. We encourage you to join a few minutes before 4:00 PM.</p>
+              <p>We look forward to welcoming you to the programme.</p>
+              <p style="margin-top:24px;">Warm regards,<br/><strong>BUE Foundation Team</strong><br/><span style="color:#888;font-size:13px;">The Joybringers · Afikpo-North, Ebonyi State, Nigeria</span></p>
+            </div>
+          </div>`;
+      } else {
+        const nextStep = isEvent
+          ? "We will send you a reminder closer to the event date with all the details you need."
+          : isTraining
+          ? "Our training coordinator will be in touch within <strong>5 working days</strong> to confirm your enrolment and share joining details."
+          : isScholarship
+          ? "Our scholarships team will review your application and contact you within <strong>4 weeks</strong>."
+          : "Our team will review your application and be in touch within <strong>4 weeks</strong>.";
+
+        confirmationHtml = `
           <div style="font-family:Arial,sans-serif;max-width:600px;color:#212121;">
             <div style="background:#4B1F6F;padding:20px 24px;border-radius:8px 8px 0 0;">
               <h2 style="color:white;margin:0;">Application Received</h2>
@@ -125,7 +172,16 @@ export async function POST(request: NextRequest) {
               <p>Visit us at <a href="https://buef.joybringerscharity.org" style="color:#4B1F6F;">buef.joybringerscharity.org</a> to learn more about our programmes.</p>
               <p style="margin-top:24px;">Warm regards,<br/><strong>BUE Foundation Team</strong><br/><span style="color:#888;font-size:13px;">The Joybringers · Afikpo-North, Ebonyi State, Nigeria</span></p>
             </div>
-          </div>`,
+          </div>`;
+      }
+
+      await resend.emails.send({
+        from: MAIL_FROM,
+        to: [email],
+        subject: isDigitalSkillsUp
+          ? "Registration Confirmed – Digital Skills-Up Programme 2026 | BUE Foundation"
+          : `Application Received – ${programme} | BUE Foundation`,
+        html: confirmationHtml,
       });
     } catch (confErr) {
       console.error("Confirmation email error (non-fatal):", confErr);
