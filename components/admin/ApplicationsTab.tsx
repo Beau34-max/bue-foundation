@@ -440,7 +440,7 @@ export default function ApplicationsTab({ isSuperAdmin }: { isSuperAdmin: boolea
 
   useEffect(() => {
     (async () => {
-      const res = await fetch("/api/admin/submissions?limit=500");
+      const res = await fetch("/api/admin/submissions?limit=5000");
       const all: Submission[] = await res.json();
       if (!Array.isArray(all)) return;
       const c: Record<string, number> = {};

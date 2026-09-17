@@ -58,7 +58,8 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type");
-  const limit = Math.min(Number(searchParams.get("limit") ?? "100"), 500);
+  const defaultLimit = type ? 2000 : 100;
+  const limit = Math.min(Number(searchParams.get("limit") ?? String(defaultLimit)), 5000);
 
   let query = supabase
     .from("submissions")
