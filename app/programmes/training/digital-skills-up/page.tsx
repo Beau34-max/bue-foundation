@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Clock, Monitor, Users, ArrowRight, BookOpen, BarChart2, Layers, PenTool, Presentation, FileText, CheckCircle } from "lucide-react";
 
@@ -106,15 +109,33 @@ const SUMMARY = [
 ];
 
 export default function DigitalSkillsUpPage() {
+  const [isActive, setIsActive] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/training")
+      .then(r => r.json())
+      .then((data: { title: string }[]) => {
+        const active = Array.isArray(data) && data.some(c => c.title.toLowerCase().includes("digital skills"));
+        setIsActive(active);
+      })
+      .catch(() => setIsActive(false));
+  }, []);
+
   return (
     <>
       {/* Header */}
       <section className="py-24 text-white text-center"
         style={{ background: "linear-gradient(135deg, #4B1F6F 0%, #212121 100%)" }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <span className="inline-block text-xs font-bold bg-accent text-dark px-3 py-1.5 rounded-full mb-4 uppercase tracking-wider">
-            Registrations Now Open
-          </span>
+          {isActive === false ? (
+            <span className="inline-block text-xs font-bold bg-gray-300 text-gray-700 px-3 py-1.5 rounded-full mb-4 uppercase tracking-wider">
+              Programme Concluded
+            </span>
+          ) : (
+            <span className="inline-block text-xs font-bold bg-accent text-dark px-3 py-1.5 rounded-full mb-4 uppercase tracking-wider">
+              Registrations Now Open
+            </span>
+          )}
           <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-3">BUE Foundation Training</p>
           <h1 className="text-3xl sm:text-5xl font-extrabold mb-4 leading-tight">
             Six-Week Digital Skills-Up Programme
@@ -123,10 +144,18 @@ export default function DigitalSkillsUpPage() {
             Free online training to equip young people with practical digital skills for
             employability, entrepreneurship, and remote work.
           </p>
-          <Link href="/programmes/training/digital-skills-up/register"
-            className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent text-dark font-bold rounded-md hover:opacity-90 transition-opacity text-base">
-            Register Now <ArrowRight size={18} />
-          </Link>
+          {isActive === false ? (
+            <p className="text-white/60 text-sm">
+              This programme has concluded. Visit our{" "}
+              <Link href="/programmes/training" className="text-accent underline">Training Programmes</Link>{" "}
+              page to see what&apos;s coming next.
+            </p>
+          ) : (
+            <Link href="/programmes/training/digital-skills-up/register"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent text-dark font-bold rounded-md hover:opacity-90 transition-opacity text-base">
+              Register Now <ArrowRight size={18} />
+            </Link>
+          )}
         </div>
       </section>
 
